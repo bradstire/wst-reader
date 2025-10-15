@@ -18,6 +18,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   res.setHeader('Connection', 'keep-alive');
   res.flushHeaders();
   
-  res.write(`data: ${JSON.stringify({ delta: "🚀🚀🚀 COMPLETE REBUILD SUCCESS! This is the NEW code running on Vercel! 🚀🚀🚀" })}\n\n`);
+  res.write(`data: ${JSON.stringify({ delta: "🎯 WEBHOOK TEST - If you see this, GitHub integration is working!" })}\n\n`);
   res.end();
 }
