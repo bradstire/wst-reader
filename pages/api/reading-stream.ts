@@ -8,16 +8,13 @@ export const config = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // CRITICAL TEST: This should NEVER appear if our code is running
-  console.log('🚨🚨🚨 OLD CODE IS STILL RUNNING - THIS SHOULD NOT APPEAR 🚨🚨🚨');
-  
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
     const sign = (req.query.sign as string) || 'Gemini';
-    console.log(`[reading-stream] Fetching latest reading for sign: ${sign} - WEBHOOK TEST ${Date.now()}`);
+    console.log(`[reading-stream] Fetching latest reading for sign: ${sign}`);
     
     const latest = await latestByPrefix(`FULL_READING__${sign}__`);
     if (!latest) {
@@ -56,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.flushHeaders();
 
     // Send the text as a single SSE event
-    res.write(`data: ${JSON.stringify({ delta: `🚨 NEW CODE IS RUNNING! ${text}` })}\n\n`);
+    res.write(`data: ${JSON.stringify({ delta: text })}\n\n`);
     res.end();
 
   } catch (error) {
