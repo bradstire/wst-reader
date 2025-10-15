@@ -14,11 +14,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const sign = (req.query.sign as string) || 'Gemini';
-    console.log(`[reading-stream] Fetching latest reading for sign: ${sign}`);
+    console.log(`[reading-stream] Fetching latest reading for sign: ${sign} - CLEAN VERSION RUNNING`);
     
     const latest = await latestByPrefix(`FULL_READING__${sign}__`);
     if (!latest) {
-      return res.status(404).json({ error: 'No reading found for this sign' });
+      // Return a test message to confirm our code is running
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache, no-transform');
+      res.setHeader('Connection', 'keep-alive');
+      res.flushHeaders();
+      res.write(`data: ${JSON.stringify({ delta: "🎉 NEW CODE IS RUNNING! No reading found for this sign. Try generating a new reading first." })}\n\n`);
+      res.end();
+      return;
     }
 
     console.log(`[reading-stream] Found latest file: ${latest.pathname}`);
