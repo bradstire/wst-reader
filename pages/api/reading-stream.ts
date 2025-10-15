@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const sign = (req.query.sign as string) || 'Gemini';
-    console.log(`[reading-stream] Fetching latest reading for sign: ${sign} - FINAL CLEAN VERSION`);
+    console.log(`[reading-stream] Fetching latest reading for sign: ${sign} - MANUAL DEPLOY REQUIRED`);
     
     const latest = await latestByPrefix(`FULL_READING__${sign}__`);
     if (!latest) {
