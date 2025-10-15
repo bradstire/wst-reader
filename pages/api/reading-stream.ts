@@ -23,13 +23,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     console.log(`[reading-stream] Found latest file: ${latest.pathname}`);
     
-    const resp = await fetch(latest.url);
+    let text: string;
     
-    if (!resp.ok) {
-      throw new Error(`Blob fetch failed: ${resp.status}`);
+    if (latest.url.startsWith('file://')) {
+      // Local file fallback
+      const fs = require('fs');
+      const filePath = latest.url.replace('file://', '');
+      text = fs.readFileSync(filePath, 'utf8');
+    } else {
+      // Blob storage
+      const resp = await fetch(latest.url);
+      if (!resp.ok) {
+        throw new Error(`Blob fetch failed: ${resp.status}`);
+      }
+      text = await resp.text();
     }
-
-    let text = await resp.text();
     
     // Remove headers from content (headers should only be in filename)
     const headerMatch = text.match(/^\[ZODIAC: .*\]\n\[GENERATED_AT: .*\]\n\n/);
