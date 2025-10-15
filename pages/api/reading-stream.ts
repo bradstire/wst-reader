@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const sign = (req.query.sign as string) || 'Gemini';
-    console.log(`[reading-stream] Fetching latest reading for sign: ${sign} - MANUAL DEPLOY REQUIRED`);
+    console.log(`[reading-stream] DEPLOYMENT TEST - Fetching latest reading for sign: ${sign}`);
     
     const latest = await latestByPrefix(`FULL_READING__${sign}__`);
     if (!latest) {
@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.setHeader('Cache-Control', 'no-cache, no-transform');
       res.setHeader('Connection', 'keep-alive');
       res.flushHeaders();
-      res.write(`data: ${JSON.stringify({ delta: "🎉 NEW CODE IS RUNNING! No reading found for this sign. Try generating a new reading first." })}\n\n`);
+      res.write(`data: ${JSON.stringify({ delta: "🚀 DEPLOYMENT SUCCESS! New code is running on Vercel! No reading found for this sign. Try generating a new reading first." })}\n\n`);
       res.end();
       return;
     }
