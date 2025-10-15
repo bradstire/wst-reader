@@ -29,7 +29,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       throw new Error(`Blob fetch failed: ${resp.status}`);
     }
 
-    const text = await resp.text();
+    let text = await resp.text();
+    
+    // Remove headers from content (headers should only be in filename)
+    const headerMatch = text.match(/^\[ZODIAC: .*\]\n\[GENERATED_AT: .*\]\n\n/);
+    if (headerMatch) {
+      text = text.substring(headerMatch[0].length);
+    }
     
     // Set SSE headers for streaming
     res.setHeader('Content-Type', 'text/event-stream');

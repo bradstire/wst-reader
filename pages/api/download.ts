@@ -29,7 +29,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       throw new Error(`Blob fetch failed: ${r.status}`);
     }
     
-    const text = await r.text();
+    let text = await r.text();
+    
+    // Remove headers from content (headers should only be in filename)
+    const headerMatch = text.match(/^\[ZODIAC: .*\]\n\[GENERATED_AT: .*\]\n\n/);
+    if (headerMatch) {
+      text = text.substring(headerMatch[0].length);
+    }
+    
     const filename = latest.pathname.split('/').pop() || `reading_${kind}.txt`;
 
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');

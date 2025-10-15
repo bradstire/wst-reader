@@ -203,19 +203,26 @@ export default function Home() {
     
     // Find cards, but only show card 1 when paragraph 2 appears (index 1)
     paragraphs.forEach((paragraph, index) => {
-      const cardMatch = paragraph.match(/([A-Za-z\s]+(?:of\s+[A-Za-z\s]+)?)(?:\s*,\s*reversed)?/i);
+      // More specific card patterns
+      const cardPatterns = [
+        /(?:The\s+)?(?:Fool|Magician|High\s+Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel\s+of\s+Fortune|Justice|Hanged\s+Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judgement|World)/gi,
+        /(?:Ace|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Page|Knight|Queen|King)\s+of\s+(?:Wands|Cups|Swords|Pentacles)/gi
+      ];
       
-      if (cardMatch) {
-        const cardName = cardMatch[1].trim();
-        const cardImage = getCardImage(cardName);
-        const isReversed = /reversed/i.test(paragraph);
-        
-        if (cardImage) {
-          // For card 1 (first card), only show when paragraph 2 appears (index 1)
-          if (index === 1 && bestCardIndex === -1) {
-            bestCard = cardImage;
-            bestCardReversed = isReversed;
-            bestCardIndex = index;
+      for (const pattern of cardPatterns) {
+        const matches = paragraph.match(pattern);
+        if (matches && matches.length > 0) {
+          const cardName = matches[0];
+          const cardImage = getCardImage(cardName);
+          const isReversed = /reversed/i.test(paragraph);
+          
+          if (cardImage) {
+            // For card 1 (first card), only show when paragraph 2 appears (index 1)
+            if (index === 1 && bestCardIndex === -1) {
+              bestCard = cardImage;
+              bestCardReversed = isReversed;
+              bestCardIndex = index;
+            }
           }
         }
       }

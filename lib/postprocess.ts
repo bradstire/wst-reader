@@ -7,8 +7,8 @@ export function isoNow() {
 }
 
 export function headerize(text: string, sign: string) {
-  if (text.startsWith('[ZODIAC:')) return text;
-  return `[ZODIAC: ${sign}]\n[GENERATED_AT: ${isoNow()}]\n\n${text}`;
+  // Don't add headers to content - headers are only in filenames
+  return text;
 }
 
 export function timestampedName(base: string, sign: string) {
