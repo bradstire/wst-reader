@@ -568,21 +568,40 @@ async function startStreaming(sign, setOutput) {
                 const parsed = JSON.parse(content);
                 if (parsed.delta) {
                   console.log('[delta]', parsed.delta.substring(0, 100) + '...');
-                  // If this is the first real content and we still have ellipsis
-                  if (!hasInitialMessageBeenReplaced.current && parsed.delta.trim()) {
-                    console.log('[first content]', parsed.delta.substring(0, 100));
-                    setOutput(parsed.delta); // Replace any ellipsis with first content
-                    hasInitialMessageBeenReplaced.current = true;
-                    setEllipsis('.'); // Stop ellipsis animation
-                    // Hide progress and enable downloads as soon as first paragraph shows
-                    setTimeout(() => {
-                      setShowProgress(false);
-                      setIsFinished(true);
-                    }, 800);
-                  } else if (hasInitialMessageBeenReplaced.current) {
-                    // Normal content appending after initial replacement
-                    appendChunk(parsed.delta);
+                  
+                  // Process the content paragraph by paragraph for animation
+                  const paragraphs = parsed.delta.split('\n\n');
+                  let currentIndex = 0;
+                  
+                  function processNextParagraph() {
+                    if (currentIndex < paragraphs.length) {
+                      const paragraph = paragraphs[currentIndex].trim();
+                      if (paragraph) {
+                        if (!hasInitialMessageBeenReplaced.current) {
+                          // First paragraph - replace ellipsis
+                          setOutput(paragraph);
+                          hasInitialMessageBeenReplaced.current = true;
+                          setEllipsis('.');
+                          // Hide progress and enable downloads
+                          setTimeout(() => {
+                            setShowProgress(false);
+                            setIsFinished(true);
+                          }, 800);
+                        } else {
+                          // Subsequent paragraphs - append with animation
+                          setOutput(prev => prev + '\n\n' + paragraph);
+                        }
+                        currentIndex++;
+                        // Add delay between paragraphs for animation effect
+                        setTimeout(processNextParagraph, 1500);
+                      } else {
+                        currentIndex++;
+                        processNextParagraph();
+                      }
+                    }
                   }
+                  
+                  processNextParagraph();
                 }
               } catch {
                 // fallback to plain text if JSON parsing fails
