@@ -78,9 +78,10 @@ Date anchor: {date_anchor}
 
 [INTRO Riff Rules]
 - Use the inputs above in your own words within the first 1–2 sentences.
-- Do not copy them verbatim; paraphrase in Angela’s voice.
-- Keep it friendly/casual; sentence-case start; begin with a word (no leading punctuation).
-- It’s OK to greet in CH01 (this allowance does NOT apply to callbacks in ch06).
+- Do not copy them verbatim; paraphrase in Angela's voice.
+- Keep it friendly/casual; ALWAYS capitalize the first letter of the first sentence.
+- Begin with a word (no leading punctuation).
+- It's OK to greet in CH01 (this allowance does NOT apply to callbacks in ch06).
 
 [METAPHOR GOVERNANCE — OVERRIDE (v3.3 hard)]
 - OPENING ZERO TOLERANCE: If the first paragraph contains any figurative comparison, DELETE that paragraph and rewrite it LITERALLY before continuing. Do not send until opener has 0 metaphors.
