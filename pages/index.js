@@ -89,21 +89,21 @@ export default function Home() {
     return () => clearInterval(progressInterval);
   }, [isGenerating]);
 
-  // Scroll-based card detection (starts after first card appears)
+  // Scroll-based card detection (always listen, but only detect after first card appears)
   useEffect(() => {
     const outputDiv = document.getElementById('output');
-    if (!outputDiv || !currentCard) return; // Only start after first card appears
-
-    // Activate scroll detection
-    scrollDetectionActive.current = true;
+    if (!outputDiv || !output) return;
 
     const handleScroll = () => {
-      detectCardInView();
+      // Only detect if scroll detection is active
+      if (scrollDetectionActive.current) {
+        detectCardInView();
+      }
     };
 
     outputDiv.addEventListener('scroll', handleScroll);
     return () => outputDiv.removeEventListener('scroll', handleScroll);
-  }, [output, currentCard]);
+  }, [output]);
 
   // Dynamic scrollbar based on visible content only
   useEffect(() => {
@@ -392,9 +392,10 @@ export default function Home() {
             const paragraphCenter = paragraphTop + paragraph.offsetHeight / 2;
             const distance = Math.abs(paragraphCenter - textboxCenter);
             
-            // Only consider cards within the fade zone AND that have finished their fade-in animation
+            // Only consider cards within the fade zone AND that are mostly visible (opacity > 0.5)
             const computedStyle = window.getComputedStyle(paragraph);
-            const isVisible = computedStyle.opacity === '1' || computedStyle.opacity === '1.0';
+            const paragraphOpacity = parseFloat(computedStyle.opacity);
+            const isVisible = paragraphOpacity > 0.5;
             const isInFadeZone = distance < fadeZone;
             
             if (isInFadeZone && isVisible && distance < closestDistance) {
