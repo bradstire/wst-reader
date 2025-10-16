@@ -36,5 +36,11 @@ export function sanitizeForOutput(src: string, opts?: { breaks?: 'none'|'short'|
   // collapse 3+ blank lines to 2
   s = s.replace(/\n{3,}/g, '\n\n');
 
-  return s.trim();
+  // Ensure first letter is capitalized
+  s = s.trim();
+  if (s.length > 0) {
+    s = s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  return s;
 }
