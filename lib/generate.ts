@@ -24,22 +24,22 @@ export async function generateFullReading(sign: string) {
   try {
     // 1) Generate chapters (sequential to respect "locked spread" semantics)
     console.log('[generate] Generating CH01...');
-    const ch1 = await genChapter(TPL_01.replaceAll('{{SIGN}}', sign));
+    const ch1 = await genChapter(TPL_01.replaceAll('{sign}', sign));
     
     console.log('[generate] Generating CH02...');
-    const ch2 = await genChapter(TPL_02.replaceAll('{{SIGN}}', sign));
+    const ch2 = await genChapter(TPL_02.replaceAll('{sign}', sign));
     
     console.log('[generate] Generating CH03...');
-    const ch3 = await genChapter(TPL_03.replaceAll('{{SIGN}}', sign));
+    const ch3 = await genChapter(TPL_03.replaceAll('{sign}', sign));
     
     console.log('[generate] Generating CH04...');
-    const ch4 = await genChapter(TPL_04.replaceAll('{{SIGN}}', sign));
+    const ch4 = await genChapter(TPL_04.replaceAll('{sign}', sign));
     
     console.log('[generate] Generating CH05...');
-    const ch5 = await genChapter(TPL_05.replaceAll('{{SIGN}}', sign));
+    const ch5 = await genChapter(TPL_05.replaceAll('{sign}', sign));
     
     console.log('[generate] Generating CH07...');
-    const ch7 = await genChapter(TPL_06.replaceAll('{{SIGN}}', sign));
+    const ch7 = await genChapter(TPL_06.replaceAll('{sign}', sign));
 
     // 2) Stitch
     console.log('[generate] Stitching chapters...');
