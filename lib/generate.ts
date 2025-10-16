@@ -3,6 +3,7 @@ import { TPL_01, TPL_02, TPL_03, TPL_04, TPL_05, TPL_06 } from './templates';
 import { saveTextBlob, deleteOldFiles } from './storage';
 import { applyBreaks } from './withBreaks';
 import { headerize, timestampedName } from './postprocess';
+import { getConfig } from './config';
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -22,24 +23,36 @@ export async function generateFullReading(sign: string) {
   console.log(`[generate] Starting full reading generation for ${sign}`);
   
   try {
+    // Get config with date anchor
+    const cfg = getConfig();
+    cfg.sign = sign; // Override with provided sign
+    
     // 1) Generate chapters (sequential to respect "locked spread" semantics)
     console.log('[generate] Generating CH01...');
-    const ch1 = await genChapter(TPL_01.replaceAll('{sign}', sign));
+    const ch1Prompt = TPL_01
+      .replaceAll('{sign}', sign)
+      .replaceAll('{date_anchor}', cfg.date_anchor);
+    const ch1 = await genChapter(ch1Prompt);
     
     console.log('[generate] Generating CH02...');
-    const ch2 = await genChapter(TPL_02.replaceAll('{sign}', sign));
+    const ch2Prompt = TPL_02.replaceAll('{sign}', sign);
+    const ch2 = await genChapter(ch2Prompt);
     
     console.log('[generate] Generating CH03...');
-    const ch3 = await genChapter(TPL_03.replaceAll('{sign}', sign));
+    const ch3Prompt = TPL_03.replaceAll('{sign}', sign);
+    const ch3 = await genChapter(ch3Prompt);
     
     console.log('[generate] Generating CH04...');
-    const ch4 = await genChapter(TPL_04.replaceAll('{sign}', sign));
+    const ch4Prompt = TPL_04.replaceAll('{sign}', sign);
+    const ch4 = await genChapter(ch4Prompt);
     
     console.log('[generate] Generating CH05...');
-    const ch5 = await genChapter(TPL_05.replaceAll('{sign}', sign));
+    const ch5Prompt = TPL_05.replaceAll('{sign}', sign);
+    const ch5 = await genChapter(ch5Prompt);
     
     console.log('[generate] Generating CH07...');
-    const ch7 = await genChapter(TPL_06.replaceAll('{sign}', sign));
+    const ch7Prompt = TPL_06.replaceAll('{sign}', sign);
+    const ch7 = await genChapter(ch7Prompt);
 
     // 2) Stitch
     console.log('[generate] Stitching chapters...');
