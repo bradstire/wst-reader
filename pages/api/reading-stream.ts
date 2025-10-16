@@ -67,9 +67,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.setHeader('X-Accel-Buffering', 'no');
     res.flushHeaders();
 
-    // Send the text as a single SSE event
-    res.write(`data: ${JSON.stringify({ delta: text })}\n\n`);
-    res.end();
+    // Stream the text paragraph by paragraph
+    const paragraphs = text.split('\n\n').filter(p => p.trim());
+    
+    let paragraphIndex = 0;
+    const streamInterval = setInterval(() => {
+      if (paragraphIndex < paragraphs.length) {
+        const paragraph = paragraphs[paragraphIndex].trim();
+        if (paragraph) {
+          res.write(`data: ${JSON.stringify({ delta: paragraph })}\n\n`);
+          paragraphIndex++;
+        } else {
+          paragraphIndex++;
+        }
+      } else {
+        clearInterval(streamInterval);
+        res.end();
+      }
+    }, 1500); // 1.5 second delay between paragraphs
 
   } catch (error) {
     console.error('[reading-stream] Error:', error);
