@@ -7,7 +7,7 @@ import { getConfig } from './config';
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-async function genChapter(prompt: string, model = 'gpt-4o'): Promise<string> {
+async function genChapter(prompt: string, model = 'gpt-4.1-mini'): Promise<string> {
   const r = await client.chat.completions.create({
     model,
     messages: [
@@ -32,27 +32,27 @@ export async function generateFullReading(sign: string) {
     const ch1Prompt = TPL_01
       .replaceAll('{sign}', sign)
       .replaceAll('{date_anchor}', cfg.date_anchor);
-    const ch1 = await genChapter(ch1Prompt);
+    const ch1 = await genChapter(ch1Prompt, cfg.openai_model);
     
     console.log('[generate] Generating CH02...');
     const ch2Prompt = TPL_02.replaceAll('{sign}', sign);
-    const ch2 = await genChapter(ch2Prompt);
+    const ch2 = await genChapter(ch2Prompt, cfg.openai_model);
     
     console.log('[generate] Generating CH03...');
     const ch3Prompt = TPL_03.replaceAll('{sign}', sign);
-    const ch3 = await genChapter(ch3Prompt);
+    const ch3 = await genChapter(ch3Prompt, cfg.openai_model);
     
     console.log('[generate] Generating CH04...');
     const ch4Prompt = TPL_04.replaceAll('{sign}', sign);
-    const ch4 = await genChapter(ch4Prompt);
+    const ch4 = await genChapter(ch4Prompt, cfg.openai_model);
     
     console.log('[generate] Generating CH05...');
     const ch5Prompt = TPL_05.replaceAll('{sign}', sign);
-    const ch5 = await genChapter(ch5Prompt);
+    const ch5 = await genChapter(ch5Prompt, cfg.openai_model);
     
     console.log('[generate] Generating CH07...');
     const ch7Prompt = TPL_06.replaceAll('{sign}', sign);
-    const ch7 = await genChapter(ch7Prompt);
+    const ch7 = await genChapter(ch7Prompt, cfg.openai_model);
 
     // 2) Stitch
     console.log('[generate] Stitching chapters...');

@@ -17,7 +17,7 @@ export function getConfig() {
     seed: null,
     reversal_ratio: 0.5,
     breaks_output: "none",
-    openai_model: "gpt-4o",
+    openai_model: "gpt-4.1-mini",
     temperature: 0.7
   };
 }
