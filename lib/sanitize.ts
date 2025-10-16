@@ -1,6 +1,10 @@
 export function sanitizeForOutput(src: string, opts?: { breaks?: 'none'|'short'|'full' }) {
   let s = src ?? '';
 
+  // Remove debug metadata lines like "[STATE: Cards locked = ...]" and "[LEN: target ...]"
+  s = s.replace(/^\[STATE:.*\]$/gm, '');
+  s = s.replace(/^\[LEN:.*\]$/gm, '');
+  
   // Remove chapter headers like "[CH01] …"
   s = s.replace(/^\[CH\d{2}\][^\n]*\n?/gm, '');
   // Remove ruler lines (—, -, etc.)

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { latestByPrefix } from '../../lib/storage';
+import { sanitizeForOutput } from '../../lib/sanitize';
 
 export const config = { 
   api: { 
@@ -53,6 +54,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (headerMatch) {
       text = text.substring(headerMatch[0].length);
     }
+    
+    // Sanitize the content to remove debug metadata
+    text = sanitizeForOutput(text, { breaks: 'none' });
     
     // Set SSE headers for streaming
     res.setHeader('Content-Type', 'text/event-stream');
