@@ -1,0 +1,20 @@
+# WST2 Prompt Automation — Config
+# Edit the values below, then run:  python generate_prompts.py
+sign: "Gemini"           # Zodiac sign for CH01 greeting
+date_anchor: "September 27"  # Casual date/time phrase for CH01
+output_dir: "output"     # Where to write prompt .txt files
+mode: "generate"         # "prompts" = only write prompt text; "generate" = call OpenAI API to write chapters
+chapters: all       # Chapters to build: "all" or a list like [1,2,3,4,5,6,7]
+seed: null                # RNG seed (set None to randomize)
+reversal_ratio: 0.5      # Rough fraction of reversed cards across the spread (0.0–1.0)
+
+# Output options for stitched reading
+#   none        -> only FULL_READING.txt
+#   with_breaks -> only FULL_READING_with_breaks.txt
+#   both        -> write both files
+breaks_output: "none"
+
+# OpenAI (optional; only used if mode == "generate")
+# 1) pip install openai
+# 2) set env var OPENAI_API_KEY=sk-...
+openai_model: "gpt-4o"    # Model name
