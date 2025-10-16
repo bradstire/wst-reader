@@ -235,6 +235,11 @@ export default function Home() {
         setCurrentCard(bestCard);
         setIsCurrentCardReversed(bestCardReversed);
         setCurrentCardOverlayOpacity(0.25); // Max opacity
+        
+        // Activate scroll detection after first card appears
+        setTimeout(() => {
+          scrollDetectionActive.current = true;
+        }, 1000); // Wait 1 second after first card appears
       }, 3200); // 3.2s delay to appear just as paragraph 2 fades in
     } else {
       // Clear card if none found
