@@ -115,6 +115,73 @@ function shouldAddBreakAfterSentence(sentence: string, index: number, totalSente
   return false;
 }
 
+function adjustBreakDurations(content: string): string {
+  /**
+   * Adjust break durations in existing content according to new rules:
+   * - Breaks > 4s → 3.0-4.0s (unless between paragraphs)
+   * - Paragraph breaks → 4.0-8.0s (max 4-5 per reading)
+   * - Short breaks 0.5-1.0s → 1.2-1.8s (for better pacing)
+   */
+  let paragraphBreakCount = 0;
+  const maxParagraphBreaks = Math.floor(Math.random() * 2) + 4; // 4-5
+  
+  const adjustBreak = (match: string, timeStr: string, offset: number): string => {
+    // Parse current duration
+    let currentDuration: number;
+    try {
+      currentDuration = parseFloat(timeStr.replace('s', ''));
+    } catch (e) {
+      return match; // Keep original if can't parse
+    }
+    
+    // Check if this is a paragraph break (has blank line before or after)
+    const beforeBreak = content.substring(0, offset).trimEnd();
+    const afterBreak = content.substring(offset + match.length).trimStart();
+    
+    // Check if there's a paragraph boundary (double newline) nearby
+    const isParagraphBreak = (
+      beforeBreak.endsWith('\n\n') ||
+      afterBreak.startsWith('\n\n') ||
+      beforeBreak.slice(-20).includes('\n\n') ||
+      afterBreak.slice(0, 20).includes('\n\n')
+    );
+    
+    let newDuration: number;
+    
+    // Apply adjustment rules
+    if (isParagraphBreak && paragraphBreakCount < maxParagraphBreaks) {
+      // Allow longer paragraph breaks (4.0-8.0s) for first 4-5 occurrences
+      if (currentDuration > 4.0) {
+        // Keep it but constrain to 4.0-8.0s range
+        newDuration = Math.random() * 4.0 + 4.0;
+        paragraphBreakCount++;
+      } else {
+        // Increase to paragraph break range
+        newDuration = Math.random() * 2.0 + 4.0;
+        paragraphBreakCount++;
+      }
+    } else if (currentDuration > 4.0) {
+      // Reduce long breaks that aren't paragraph breaks to 3.0-4.0s
+      newDuration = Math.random() * 1.0 + 3.0;
+    } else if (currentDuration >= 0.5 && currentDuration <= 1.0) {
+      // Slightly increase very short breaks for better pacing
+      newDuration = Math.random() * 0.6 + 1.2;
+    } else {
+      // Keep breaks in the 1.0-4.0s range as-is (with slight variation)
+      newDuration = currentDuration + (Math.random() * 0.4 - 0.2);
+      newDuration = Math.max(0.5, Math.min(4.0, newDuration)); // Clamp to reasonable range
+    }
+    
+    return `<break time="${Math.round(newDuration * 10) / 10}s" />`;
+  };
+  
+  // Find and replace all break tags
+  return content.replace(
+    /<break\s+time=["']([^"']+)["']\s*\/>/g,
+    adjustBreak
+  );
+}
+
 export function applyBreaks(stitched: string): string {
   // Split into paragraphs first to preserve structure
   const paragraphs = stitched.split('\n\n');
@@ -156,5 +223,10 @@ export function applyBreaks(stitched: string): string {
   }
   
   // Join paragraphs with double newlines to preserve structure
-  return processedParagraphs.join('\n\n');
+  let result = processedParagraphs.join('\n\n');
+  
+  // Adjust break durations for better pacing
+  result = adjustBreakDurations(result);
+  
+  return result;
 }

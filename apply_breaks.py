@@ -180,6 +180,77 @@ def should_add_break_after_sentence(sentence, index, total_sentences):
     
     return False
 
+def adjust_break_durations(content):
+    """
+    Adjust break durations in existing content according to new rules:
+    - Breaks > 4s → 3.0-4.0s (unless between paragraphs)
+    - Paragraph breaks → 4.0-8.0s (max 4-5 per reading)
+    - Short breaks 0.5-1.0s → 1.2-1.8s (for better pacing)
+    """
+    # Track paragraph breaks for limiting long pauses
+    paragraph_break_count = 0
+    max_paragraph_breaks = random.randint(4, 5)
+    
+    def adjust_break(match):
+        nonlocal paragraph_break_count
+        
+        # Extract the full match and the duration value
+        full_match = match.group(0)
+        time_str = match.group(1)
+        
+        # Parse current duration
+        try:
+            current_duration = float(time_str.replace('s', ''))
+        except ValueError:
+            return full_match  # Keep original if can't parse
+        
+        # Get the position of this break in the text
+        pos = match.start()
+        
+        # Check if this is a paragraph break (has blank line before or after)
+        # Look back and forward in the content
+        before_break = content[:pos].rstrip()
+        after_break = content[pos + len(full_match):].lstrip()
+        
+        # Check if there's a paragraph boundary (double newline) nearby
+        is_paragraph_break = (before_break.endswith('\n\n') or 
+                             after_break.startswith('\n\n') or
+                             '\n\n' in before_break[-20:] or
+                             '\n\n' in after_break[:20])
+        
+        # Apply adjustment rules
+        if is_paragraph_break and paragraph_break_count < max_paragraph_breaks:
+            # Allow longer paragraph breaks (4.0-8.0s) for first 4-5 occurrences
+            if current_duration > 4.0:
+                # Keep it but constrain to 4.0-8.0s range
+                new_duration = random.uniform(4.0, 8.0)
+                paragraph_break_count += 1
+            else:
+                # Increase to paragraph break range
+                new_duration = random.uniform(4.0, 6.0)
+                paragraph_break_count += 1
+        elif current_duration > 4.0:
+            # Reduce long breaks that aren't paragraph breaks to 3.0-4.0s
+            new_duration = random.uniform(3.0, 4.0)
+        elif 0.5 <= current_duration <= 1.0:
+            # Slightly increase very short breaks for better pacing
+            new_duration = random.uniform(1.2, 1.8)
+        else:
+            # Keep breaks in the 1.0-4.0s range as-is (with slight variation)
+            new_duration = current_duration + random.uniform(-0.2, 0.2)
+            new_duration = max(0.5, min(4.0, new_duration))  # Clamp to reasonable range
+        
+        return f'<break time="{round(new_duration, 1)}s" />'
+    
+    # Find and replace all break tags
+    adjusted_content = re.sub(
+        r'<break\s+time=["\']([^"\']+)["\']\s*/>',
+        adjust_break,
+        content
+    )
+    
+    return adjusted_content
+
 def apply_breaks_to_file(input_file, output_file):
     """Apply break tags to the input file and save to output file."""
     print(f"Reading input file: {input_file}")
@@ -196,11 +267,15 @@ def apply_breaks_to_file(input_file, output_file):
     print("Applying break tags according to ruleset...")
     processed_content = add_breaks_to_text(content)
     
+    # Adjust break durations according to new rules
+    print("Adjusting break durations for better pacing...")
+    processed_content = adjust_break_durations(processed_content)
+    
     print(f"Processed content length: {len(processed_content)} characters")
     
     # Count break tags
     break_count = len(re.findall(r'<break time="[^"]+"\s*/>', processed_content))
-    print(f"Added {break_count} break tags")
+    print(f"Total break tags: {break_count}")
     
     # Ensure output directory exists
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
