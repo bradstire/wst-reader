@@ -4,7 +4,7 @@ import { sanitizeForOutput } from '../../lib/sanitize';
 
 export const config = { 
   api: { 
-    responseLimit: '16mb' 
+    responseLimit: false  // Remove size limit
   } 
 };
 

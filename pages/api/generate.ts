@@ -4,7 +4,7 @@ import { generateFullReading } from '../../lib/generate';
 export const config = { 
   api: { 
     bodyParser: true, 
-    responseLimit: '16mb' 
+    responseLimit: false 
   } 
 };
 
