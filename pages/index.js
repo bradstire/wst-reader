@@ -586,7 +586,8 @@ async function startStreaming(sign, setOutput) {
                     appendChunk('\n\n' + parsed.delta);
                   }
                 }
-              } catch {
+              } catch (parseError) {
+                console.error('[JSON parse error]', parseError, 'Content:', content);
                 // fallback to plain text if JSON parsing fails
                 appendChunk(content);
               }

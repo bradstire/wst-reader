@@ -88,8 +88,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   } catch (error) {
     console.error('[reading-stream] Error:', error);
-    res.status(500).json({ 
-      error: error instanceof Error ? error.message : 'Unknown error' 
-    });
+    
+    // If headers were already sent (SSE started), send error as SSE message
+    if (res.headersSent) {
+      res.write(`data: ${JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' })}\n\n`);
+      res.end();
+    } else {
+      // Headers not sent yet, can send JSON error
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      });
+    }
   }
 }
