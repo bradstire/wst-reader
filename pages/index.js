@@ -621,18 +621,18 @@ async function startStreaming(sign, setOutput) {
           textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
           color: '#ffffff',
           letterSpacing: '0.0375em',
-          fontSize: '2.5rem'
+          fontSize: '2rem'
         }}>WHITE SOUL TAROT</h1>
 
-                  <div className="flex flex-wrap items-center justify-center" style={{gap: '24px', marginBottom: '40px'}}>
+                  <div className="flex flex-wrap items-center justify-center" style={{gap: '18px', marginBottom: '30px'}}>
                     {/* Generate */}
             <button
               className="px-6 py-3 rounded-lg text-white disabled:opacity-60 font-bold text-lg"
               style={{ 
-                fontSize: '20px', 
+                fontSize: '16px', 
                 fontWeight: 'bold', 
-                padding: '12px 24px',
-                borderRadius: '8px',
+                padding: '10px 20px',
+                borderRadius: '6px',
                 background: 'rgba(34, 32, 58, 0.4)',
                 backdropFilter: 'blur(8px)',
                 border: '1px solid rgba(255, 255, 255, 0.1)'
@@ -647,10 +647,10 @@ async function startStreaming(sign, setOutput) {
           <select
             className="py-3 rounded-lg text-white font-bold text-lg text-center"
             style={{ 
-              fontSize: '20px', 
+              fontSize: '16px', 
               fontWeight: 'bold', 
-              padding: '12px 30px 12px 20px',
-              borderRadius: '8px',
+              padding: '10px 24px 10px 16px',
+              borderRadius: '6px',
               textAlign: 'center',
               background: 'rgba(34, 32, 58, 0.4)',
               backdropFilter: 'blur(8px)',
@@ -686,10 +686,10 @@ async function startStreaming(sign, setOutput) {
             <button
                         className="px-5 py-3 rounded-lg text-white font-bold text-lg" 
                         style={{ 
-                          fontSize: '20px', 
+                          fontSize: '16px', 
                           fontWeight: 'bold', 
-                          padding: '12px 20px',
-                          borderRadius: '8px',
+                          padding: '10px 16px',
+                          borderRadius: '6px',
                           background: 'rgba(34, 32, 58, 0.4)',
                           backdropFilter: 'blur(8px)',
                           border: '1px solid rgba(255, 255, 255, 0.1)'
@@ -701,10 +701,10 @@ async function startStreaming(sign, setOutput) {
             <button
                         className="px-5 py-3 rounded-lg text-white font-bold text-lg" 
                         style={{ 
-                          fontSize: '20px', 
+                          fontSize: '16px', 
                           fontWeight: 'bold', 
-                          padding: '12px 20px',
-                          borderRadius: '8px',
+                          padding: '10px 16px',
+                          borderRadius: '6px',
                           background: 'rgba(34, 32, 58, 0.4)',
                           backdropFilter: 'blur(8px)',
                           border: '1px solid rgba(255, 255, 255, 0.1)'
@@ -724,10 +724,10 @@ async function startStreaming(sign, setOutput) {
                         position: 'fixed',
                         top: '50%',
                         left: '50%',
-                        width: '325px',
-                        height: '455px',
-                        marginTop: '-227.5px',
-                        marginLeft: '-162.5px',
+                        width: '260px',
+                        height: '364px',
+                        marginTop: '-182px',
+                        marginLeft: '-130px',
                         backgroundImage: `url('/cards/${currentCard}')`,
                         backgroundSize: 'contain',
                         backgroundRepeat: 'no-repeat',
@@ -758,19 +758,19 @@ async function startStreaming(sign, setOutput) {
         {/* Output box */}
         <div className="w-full">
           {/* width limiter for the text box */}
-          <div className="w-full mx-auto max-w-[1500px]"> {/* ← widened from 900px to 1500px (600px wider) */}
+          <div className="w-full mx-auto max-w-[1200px]"> {/* ← scaled down from 1500px to 1200px */}
             <div
               id="output"
               className="
-                h-[80vh] w-full
+                h-[65vh] w-full
                 whitespace-pre-wrap
                 rounded-lg border border-white/20
                 text-[#E6E6EB]
-                font-mono text-[24px] leading-8 shadow-2xl
+                font-mono text-[18px] leading-6 shadow-2xl
                 backdrop-blur-md
               "
               style={{
-                padding: '40px', 
+                padding: '30px', 
                 borderRadius: '8px',
                 backgroundColor: 'rgba(34, 32, 58, 0.3)',
                 backdropFilter: 'blur(12px)',
