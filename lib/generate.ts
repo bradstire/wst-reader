@@ -50,13 +50,13 @@ export async function generateFullReading(sign: string) {
     const ch5Prompt = TPL_05.replaceAll('{sign}', sign);
     const ch5 = await genChapter(ch5Prompt, cfg.openai_model);
     
-    console.log('[generate] Generating CH07...');
-    const ch7Prompt = TPL_06.replaceAll('{sign}', sign);
-    const ch7 = await genChapter(ch7Prompt, cfg.openai_model);
+    console.log('[generate] Generating CH06 (finale)...');
+    const ch6Prompt = TPL_06.replaceAll('{sign}', sign);
+    const ch6 = await genChapter(ch6Prompt, cfg.openai_model);
 
     // 2) Stitch
     console.log('[generate] Stitching chapters...');
-    const stitchedRaw = [ch1, ch2, ch3, ch4, ch5, ch7].join('\n\n');
+    const stitchedRaw = [ch1, ch2, ch3, ch4, ch5, ch6].join('\n\n');
 
     // 3) Headerize (downstream)
     console.log('[generate] Adding header...');

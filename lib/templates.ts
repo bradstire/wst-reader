@@ -13,5 +13,4 @@ export const TPL_02 = readTemplate('02.txt');
 export const TPL_03 = readTemplate('03.txt');
 export const TPL_04 = readTemplate('04.txt');
 export const TPL_05 = readTemplate('05.txt');
-export const TPL_06 = readTemplate('07.txt');     // your CH07
-export const TPL_CB = readTemplate('callback.txt');
+export const TPL_06 = readTemplate('06.txt');     // CH06 finale with CTA
