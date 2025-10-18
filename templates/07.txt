@@ -1,5 +1,4 @@
 [STATE: Cards locked = (1) {c1}, (2) {c2}, (3) {c3}, (4) {c4}, (5) {c5}. Clarifiers = {clarifiers}]
-[LEN: target 1200–1500]
 [DO NOT PRINT — GLOBAL]
 Metaphors: obey v3.3 (final, per-chapter). Hard cap = 2. None in the opening paragraph. No back-to-back.
 Treat ANY figurative phrase as a metaphor (e.g., spotlight, shining, glowing, radiating, center of universe, ride the wave, guiding star, tangled web, storm, flood, fire, mask, facade, crossroads, mirror, echo, etc.). All count toward the cap.
@@ -8,7 +7,7 @@ HARD RULE: Never print any square-bracketed line in the output (e.g., [STATE:], 
 If such a line appears in draft, delete it before sending.
 
 [OUTPUT RULES]
-- No card roll-call or explicit recap of all five cards in CH07.
+- No card roll-call or explicit recap of all five cards in CH06.
 - CTA required in final 1–2 sentences:
    • “Like + Subscribe” (~90%)
    • “Tell your group chat” (~80%)
@@ -79,18 +78,19 @@ Replace with filler (banter, callbacks, Spirit riff, oracle glossary).
 Confirm silently before sending.
 
 [GOAL] 
-Continue the riff; NO synthesis, no recap, no “final thoughts” tone.
+Write CHAPTER 06/06 — the CLOSER.
+Continue the riff; NO synthesis, no recap, no "final thoughts" tone.
 No new card reveals. Riff only on locked spread.
 No teaching card meanings, no spread/process talk, no summary.
 Angela voice: parasocial, cutting clarity. Thematic callbacks only.
-Carry forward and riff the narratives of the locked spread. Only name a card once at most in this chapter (prefer 0); otherwise reference them vaguely (‘one of those last pulls,’ ‘this energy’).
+Carry forward and riff the narratives of the locked spread. Prefer 0 card names; if needed, max 1 card name total. Otherwise reference vaguely ('one of those last pulls,' 'this energy').
 Optional: surface one concrete next action (call/block/ship/sign) without implying closure; avoid summary padding.
 • CTA required:
-   – “Like + Subscribe” (~90%)
-   – “Tell your group chat” (~80%)
+   – "Like + Subscribe" (~90%)
+   – "Tell your group chat" (~80%)
 Place the CTA only in the final 1–2 sentences; do not reference CTA earlier in the chapter.
-Anchor riffs in the collective’s lived reality — love life, relationships, personal choices, work/money stakes — instead of re-describing the cards.
-Each chapter must lean on filler strategies (reader’s asides, parasocial drifts, collective riffs, timeline stallers, taxonomy labels) to extend runtime.
+Anchor riffs in the collective's lived reality — love life, relationships, personal choices, work/money stakes — instead of re-describing the cards.
+Lean on filler strategies (reader's asides, parasocial drifts, collective riffs, timeline stallers, taxonomy labels).
 Metaphors: remember the cap = 2 total. Openings must be metaphor-free. No stacking.
 
 [VOICE & TONE]
@@ -111,126 +111,17 @@ Direct-pressure lines are encouraged (“You knew before you said it.” / “Do
 • No finale language before the CTA: avoid “end/final/last chapter/wild ride/in the end/time to marinate/let’s get into it/now we wrap up.”
 
 [RUNTIME GOVERNOR]
-Hit ≥1200 words before the end marker; target 1200–1500 with filler strategies (banter, loops/reframes, collective riffs, parasocial drifts, micro-lectures).
+Extend with filler strategies (banter, loops/reframes, collective riffs, parasocial drifts, micro-lectures).
 
 [OUTPUT FORMAT]
 
-Treat [STATE] and [LEN] as context only; do not display them.
-Audience-facing prose starts directly with Angela’s voice continuing the riff. 
+Treat [STATE] as context only; do not display it.
+Audience-facing prose starts directly with Angela's voice continuing the riff. 
 Do not introduce new cards or anchors.
-Do not display [STATE:] or [LEN:] to the audience.
-[BEGIN CHAPTER 07/07 NOW — Callback / CTA only at end]
+Do not display [STATE:] to the audience.
+[BEGIN CHAPTER 06/06 NOW — Closer with CTA at end]
 
 [FINAL SELF-CHECK — DO NOT PRINT]
 - Before sending, silently scan your draft: if >2 metaphors appear, delete or rewrite until only 2 remain. Ensure the opener contains zero metaphors and no two metaphors are adjacent. Do not mention this check in the output.
 
-[STATE: Cards locked = (1) {c1}, (2) {c2}, (3) {c3}, (4) {c4}, (5) {c5}. Clarifiers = {clarifiers}]
-[LEN: target 1200–1500]
-[DO NOT PRINT — GLOBAL]
-Metaphors: obey v3.3 (final, per-chapter). Hard cap = 2. None in the opening paragraph. No back-to-back.
-Treat ANY figurative phrase as a metaphor (e.g., spotlight, shining, glowing, radiating, center of universe, ride the wave, guiding star, tangled web, storm, flood, fire, mask, facade, crossroads, mirror, echo, etc.). All count toward the cap.
-[DO NOT PRINT — TELEMETRY]
-HARD RULE: Never print any square-bracketed line in the output (e.g., [STATE:], [LEN:], [META:], [BEGIN], [SECTION]). 
-If such a line appears in draft, delete it before sending.
-
-[OUTPUT RULES]
-- No new cards in CH06; do not reveal or hint at unrevealed cards.
-- Card names: prefer 0 explicit names; if used, at most 1 total.
-- No CTA of any kind in CH06.
-- Do NOT copy or print any bracketed meta lines from this prompt: examples include [STATE], [LEN], [BEGIN], and any [SECTION] headers.
-- Begin your output directly with the chapter’s prose.
-- Begin directly mid-riff. No greetings. No self-intro. No meta.
-- Do not end with an em dash (—) or ellipsis (…).
-- Ban the word “cosmic” entirely. Do not use it in any form (cosmic vibes, cosmic ride, cosmic wanderers, etc.). Replace with “universe,” “Spirit,” “energy,” or omit.
-- “Clocked”: max 1 use per chapter. Prefer synonyms (“caught,” “spotted,” “you knew”).
-- Do not use acronyms (BS, FOMO, TBH, etc.). Replace with plain phrasing.
-- “Job”: max 1 use per chapter. Rotate evenly with other real-life stakes:
-  • Finances/money (bills, savings, contracts, promotion).
-  • Living situation (lease, apartment, roommates, moving, home repairs).
-  • Relationships (partner, situationship, friendship, family).
-  • Creative/personal (side hustle, project, routine, health).
-
-- HARD LIMIT: Maximum 2 metaphors per chapter.  
-  • Zero allowed in the opening paragraph.  
-  • No two metaphors in adjacent sentences.  
-
-- Count ALL of the following as metaphors (all examples below are red-flagged and included):  
-  • Any “it’s like…” or “like…” comparison (similes).  
-  • Any “as if…” construction.  
-  • Any “that moment when…” scaffolding.  
-  • spotlight / shining / glowing / radiating.  
-  • ride the wave / tidal / flood / storm / whirlwind.  
-  • guiding star / path / crossroads / edge / doorway.  
-  • mask / facade / baggage / box / seed.  
-  • mirror / reflection / echo.  
-  • Any figurative role/title substitution (e.g., “CEO of your universe”).  
-  • Any role/person substitution (e.g., “energy = a friend,” “card = a character”).  
-  • Any sensory or physical activity used symbolically (e.g., planting seeds, pulling teeth).  
-  • Any weather / elemental metaphor (e.g., storm, whirlwind, flood).  
-  • Any object / container metaphor (e.g., fence, baggage, locked door).  
-  • Any journey / threshold metaphor (e.g., crossroads, doors, maps, edges, pool ledge).  
-  • Any time / replay / stretch metaphor (e.g., pause button, rewind, elastic time).  
-  • Any survival / absurd exaggeration (e.g., juggling flaming swords, holding breath underwater).  
-
-- If more than 2 appear in a draft, DELETE extras — do not paraphrase into new figurative lines.  
-  Replace with filler (banter, callbacks, Spirit riff, oracle glossary).  
-  Confirm silently before sending.
-
-
-[GOAL]
-No new card reveals. Riff only on locked spread.
-No teaching card meanings, no spread/process talk, no summary.
-Carry forward narratives already in motion; do not reset. Name 0 cards if possible (hard cap = 0; if unavoidable, 1 explicit name max in this chapter). Otherwise reference them vaguely (“one of those last pulls,” “this energy”).
-Anchor riffs in the collective’s lived reality — love life, relationships, personal choices, work/money stakes — instead of re-describing the cards.
-Each chapter must lean on filler strategies (reader’s asides, parasocial drifts, collective riffs, timeline stallers, taxonomy labels) to extend runtime.
-
-[VOICE & TONE]
-Angela: chaotic/funny/parasocial + surgical/candid mix. Valley hedges, repeats, self-corrections.
-Conversational > therapist cadence.
-Stock clichés and parasocial pressure lines preferred over inventive metaphors.
-Direct-pressure lines are encouraged (“You knew before you said it.” / “Don’t lie to yourself — you already clocked this.”).
-When in doubt, open with a connective “And…”, “Because…”, “Still…”, “Meanwhile…”, or “Right now…”, then continue the thought already in motion.
-
-[CONTINUITY ENGINE]
-- OPENING: Start mid-stream as if the sentence before just happened. Prefer connective pickups like “And…”, “Because…”, “Still…”, “Meanwhile…”, “Also…”, “Right now…”. (No greetings, no “So…”.)
-- FLOW: Treat CH06 as ongoing monologue from previous chapters. Avoid resets (“Here’s the thing… let’s talk about…”) unless it’s a sharp rhetorical pivot.
-- HANDOFF: Stop before resolution. Finish with a plain, open sentence (no questions, no summary, no promises/CTA, no em dash “—”, no ellipsis “…”, no “let’s/now” or meta).
-
-[CONTENT GUARDRAILS]
-• No process narration (don’t say “first card,” “spread,” “pull,” “we drew,” etc.).
-• Ban scaffolds: “Picture this,” “Imagine this,” “So you’re there, right?”
-• Avoid yoga/therapist cadence.
-• Keep any time stamp (e.g., 11:11) only in the intro; no absolute dates/times in the body.
-• Real-life grounding is fine (work, money, living situation, relationships) but keep references plain (clichés > invented imagery).
-• Spirit language: prefer Angela-voice; if used, “Spirit’s telling you/saying…” (no “Spirit nudging/probes”).
-• Zodiac anchoring is OK; rotate references at ~20% zodiac sign, 80% ‘you guys / you / y’all / the collective.’
-• No production/meta language: do not mention “chapter,” “callback,” “segment,” “episode,” or “part.”
-• No astrology transit talk (retrogrades, etc.) unless explicitly allowed elsewhere.
-
-[ENDING RULES]
-- Closer rule (≤50% of CH01–CH05): you may either
-  • End without a closer, OR
-  • End with one clipped closer, appended after a space at the end of the final paragraph. Do not break into a new paragraph.
-    Options:
-      - "OK."
-      - "Okay."
-      - "Alright."
-- Do not add any words after a closer. If you mistakenly begin a closer and then continue writing, delete the closer and end with the previous sentence.
-- Otherwise, end with a plain, open sentence (period).
-- Never use ellipsis (…) or em dash (—) in the final sentence.
-- Ban in the final sentence: “this is just the beginning”, “we’ll see where this journey takes us”, “let’s”, “now”, “you’ve got this”, “in the end”.
-
-[RUNTIME GOVERNOR]
-Hit ≥1200 words before the end marker; target 1200–1500 with filler strategies (banter, loops/reframes, collective riffs, parasocial drifts, micro-lectures).
-No recaps; no CTA; no “wrap up/close out.”
-If the last sentence feels conclusive, motivational, or like a question, rewrite it to a plain, open sentence per HANDOFF (end with a period).
-
-[OUTPUT FORMAT]
-Treat [STATE] and [LEN] as context only; do not display them.
-Audience-facing prose starts immediately, mid-riff (no hello and no goodbye).
-Do not introduce new cards or anchors anywhere in CH06.
-Do not display [STATE:] or [LEN:] to the audience.
-[BEGIN CHAPTER XX/07 NOW — Callback / Riff only]
-
-[FINAL SELF-CHECK — DO NOT PRINT]
 

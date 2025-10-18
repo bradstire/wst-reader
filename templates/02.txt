@@ -1,5 +1,4 @@
 [STATE: Cards locked = (1) {c1}, (2) {c2}, (3) {c3}, (4) {c4}, (5) {c5}. Clarifiers = {clarifiers}]
-[LEN: target 1200–1500]
 [DO NOT PRINT — GLOBAL]
 Metaphors: obey v3.3 (final, per-chapter). Hard cap = 2. None in the opening paragraph. No back-to-back.
 Treat ANY figurative phrase as a metaphor (e.g., spotlight, shining, glowing, radiating, center of universe, ride the wave, guiding star, tangled web, storm, flood, fire, mask, facade, crossroads, mirror, echo, etc.). All count toward the cap.
@@ -73,7 +72,7 @@ Confirm silently before sending.
 {card2_line}
 
 [GOAL]
-Write CHAPTER 02/07 of a White Soul Tarot 2 reading using the locked spread above.
+Write CHAPTER 02/06 of a White Soul Tarot 2 reading using the locked spread above.
 Card 02 must be named as the very first line of the chapter, with correct orientation.
 Optional quick reaction allowed (“Oh my god,” “Huh??,” “Hm,” “Whoa,” “Sheesh,” “Oh wow”) on the same line, after a period. Rotate these reactions across chapters so no more than two chapters in a full 5-card reading repeat the same reaction. Example: “The Moon, reversed. Whoa.”
 Build the chapter around Card 02 as-lived.
@@ -110,14 +109,14 @@ Direct-pressure lines are encouraged (“You knew before you said it.” / “Do
 - Ban in the final sentence: “this is just the beginning”, “we’ll see where this journey takes us”, “let’s”, “now”, “you’ve got this”, “in the end”.
 
 [RUNTIME GOVERNOR]
-Hit ≥1200 words before the end marker; target 1200–1500 with filler strategies (loops, parasocial drifts, collective riffs, micro-lectures).
+Extend with filler strategies (loops, parasocial drifts, collective riffs, micro-lectures).
 
 [OUTPUT FORMAT]
 
-Silently print the two bracketed lines above ([STATE:], [LEN:]) at the very top.
+Silently print [STATE:] at the very top.
 Audience-facing prose starts with Card 02 line.
-Do not display [STATE:] or [LEN:] to the audience.
-[BEGIN CHAPTER 02/07 NOW — Use Card 02 exactly as locked:]
+Do not display [STATE:] to the audience.
+[BEGIN CHAPTER 02/06 NOW — Use Card 02 exactly as locked:]
 - Metaphors: hard cap = 2 per chapter. None allowed in the opening paragraph. 
   No back-to-back metaphors. 
   Count every figurative comparison (“it’s like…,” “as if…,” “that moment when…,” role/title substitutions) as a metaphor. 

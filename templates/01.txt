@@ -1,5 +1,4 @@
 [STATE: Cards locked = (1) {c1}, (2) {c2}, (3) {c3}, (4) {c4}, (5) {c5}. Clarifiers = {clarifiers}]
-[LEN: target 1200–1500]
 [DO NOT PRINT — GLOBAL]
 Metaphors: obey v3.3 (final, per-chapter). Hard cap = 2. None in the opening paragraph. No back-to-back.
 Treat ANY figurative phrase as a metaphor (e.g., spotlight, shining, glowing, radiating, center of universe, ride the wave, guiding star, tangled web, storm, flood, fire, mask, facade, crossroads, mirror, echo, etc.). All count toward the cap.
@@ -95,7 +94,7 @@ Date anchor: {date_anchor}
 {card1_line}
 
 [GOAL]
-Write CHAPTER 01/07 of a White Soul Tarot 2 reading using the locked spread above.
+Write CHAPTER 01/06 of a White Soul Tarot 2 reading using the locked spread above.
 Follow CH01 opening order exactly: Greeting + zodiac sign → casual date/time anchor (optional) → Card 01 line.
 Card 01 must be named as the very first line of the second paragraph (after intro paragraph), with correct orientation. Optional quick reaction allowed (“Oh my god,” “Huh??,” “Hm,” “Whoa,” “Sheesh,” “Oh wow”) on the same line, after a period. Rotate these reactions across chapters so no more than two chapters in a full 5-card reading repeat the same reaction. Example: “The Moon, reversed. Whoa.”
 Build the chapter around Card 01 as-lived (no card-meaning lecture, no spread/process talk, no summary).
@@ -130,16 +129,16 @@ Direct-pressure lines are encouraged (“You knew before you said it.” / “Do
 - If you begin a closer and continue writing, delete the closer and end with the previous sentence.
 
 [RUNTIME GOVERNOR]
-Hit ≥1200 words before the end marker; target 1200–1500 with filler strategies (banter, loops/reframes, collective riffs, parasocial drifts, micro-lectures).
-No recaps; no CTA; no “wrap up/close out.”
+Extend with filler strategies (banter, loops/reframes, collective riffs, parasocial drifts, micro-lectures).
+No recaps; no CTA; no "wrap up/close out."
 
 [OUTPUT FORMAT]
 
-Silently print the two bracketed lines above ([STATE:], [LEN:]) at the very top.
+Silently print [STATE:] at the very top.
 Audience-facing prose starts with the intro paragraph (greeting + zodiac + date/time anchor).
 Card 01 must then be the very first line of the second paragraph.
 Always capitalize the first word of the first sentence.
-Do not display [STATE:] or [LEN:] to the audience.
-[BEGIN CHAPTER 01/07 NOW — Use Card 01 exactly as locked:]
+Do not display [STATE:] to the audience.
+[BEGIN CHAPTER 01/06 NOW — Use Card 01 exactly as locked:]
 
 [FINAL SELF-CHECK — DO NOT PRINT]
