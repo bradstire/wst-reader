@@ -4,7 +4,6 @@ import { saveTextBlob, deleteOldFiles } from './storage';
 import { applyBreaks } from './withBreaks';
 import { headerize, timestampedName } from './postprocess';
 import { getConfig } from './config';
-import { sanitizeForOutput } from './sanitize';
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -59,26 +58,22 @@ export async function generateFullReading(sign: string) {
     console.log('[generate] Stitching chapters...');
     const stitchedRaw = [ch1, ch2, ch3, ch4, ch5, ch7].join('\n\n');
 
-    // 3) Sanitize (remove debug logs)
-    console.log('[generate] Sanitizing content...');
-    const stitchedSanitized = sanitizeForOutput(stitchedRaw, { breaks: 'none' });
-
-    // 4) Headerize (downstream)
+    // 3) Headerize (downstream)
     console.log('[generate] Adding header...');
-    const stitchedWithHeader = headerize(stitchedSanitized, sign);
+    const stitchedWithHeader = headerize(stitchedRaw, sign);
 
-    // 5) Save stitched
+    // 4) Save stitched
     console.log('[generate] Saving stitched file...');
     const plainName = timestampedName('FULL_READING', sign);
     await saveTextBlob(plainName, stitchedWithHeader);
 
-    // 6) Apply breaks (downstream)
+    // 5) Apply breaks (downstream)
     console.log('[generate] Applying break tags...');
     const withBreaks = applyBreaks(stitchedWithHeader);
     const breaksName = timestampedName('FULL_READING_with_breaks', sign);
     await saveTextBlob(breaksName, withBreaks);
 
-    // 7) Clean up old files (keep only 5 most recent)
+    // 6) Clean up old files (keep only 5 most recent)
     console.log('[generate] Cleaning up old files...');
     await deleteOldFiles(`FULL_READING__${sign}__`, 5);
     await deleteOldFiles(`FULL_READING_with_breaks__${sign}__`, 5);

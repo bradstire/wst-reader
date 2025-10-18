@@ -89,21 +89,21 @@ export default function Home() {
     return () => clearInterval(progressInterval);
   }, [isGenerating]);
 
-  // Scroll-based card detection (always listen, but only detect after first card appears)
+  // Scroll-based card detection (starts after first card appears)
   useEffect(() => {
     const outputDiv = document.getElementById('output');
-    if (!outputDiv || !output) return;
+    if (!outputDiv || !currentCard) return; // Only start after first card appears
+
+    // Activate scroll detection
+    scrollDetectionActive.current = true;
 
     const handleScroll = () => {
-      // Only detect if scroll detection is active
-      if (scrollDetectionActive.current) {
-        detectCardInView();
-      }
+      detectCardInView();
     };
 
     outputDiv.addEventListener('scroll', handleScroll);
     return () => outputDiv.removeEventListener('scroll', handleScroll);
-  }, [output]);
+  }, [output, currentCard]);
 
   // Dynamic scrollbar based on visible content only
   useEffect(() => {
@@ -392,10 +392,9 @@ export default function Home() {
             const paragraphCenter = paragraphTop + paragraph.offsetHeight / 2;
             const distance = Math.abs(paragraphCenter - textboxCenter);
             
-            // Only consider cards within the fade zone AND that are mostly visible (opacity > 0.5)
+            // Only consider cards within the fade zone AND that have finished their fade-in animation
             const computedStyle = window.getComputedStyle(paragraph);
-            const paragraphOpacity = parseFloat(computedStyle.opacity);
-            const isVisible = paragraphOpacity > 0.5;
+            const isVisible = computedStyle.opacity === '1' || computedStyle.opacity === '1.0';
             const isInFadeZone = distance < fadeZone;
             
             if (isInFadeZone && isVisible && distance < closestDistance) {
@@ -569,7 +568,6 @@ async function startStreaming(sign, setOutput) {
                 const parsed = JSON.parse(content);
                 if (parsed.delta) {
                   console.log('[delta]', parsed.delta.substring(0, 100) + '...');
-                  
                   // If this is the first real content and we still have ellipsis
                   if (!hasInitialMessageBeenReplaced.current && parsed.delta.trim()) {
                     console.log('[first content]', parsed.delta.substring(0, 100));
@@ -583,11 +581,10 @@ async function startStreaming(sign, setOutput) {
                     }, 800);
                   } else if (hasInitialMessageBeenReplaced.current) {
                     // Normal content appending after initial replacement
-                    appendChunk('\n\n' + parsed.delta);
+                    appendChunk(parsed.delta);
                   }
                 }
-              } catch (parseError) {
-                console.error('[JSON parse error]', parseError, 'Content:', content);
+              } catch {
                 // fallback to plain text if JSON parsing fails
                 appendChunk(content);
               }
