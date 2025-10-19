@@ -1,5 +1,5 @@
 [STATE: Cards locked = (1) {c1}, (2) {c2}, (3) {c3}, (4) {c4}, (5) {c5}. Clarifiers = {clarifiers}]
-[LEN: target 350–420]
+[LEN: target 450–550]
 [DO NOT PRINT — GLOBAL]
 Metaphors: obey v3.3 (final, per-chapter). Hard cap = 2. None in the opening paragraph. No back-to-back.
 Treat ANY figurative phrase as a metaphor (e.g., spotlight, shining, glowing, radiating, center of universe, ride the wave, guiding star, tangled web, storm, flood, fire, mask, facade, crossroads, mirror, echo, etc.). All count toward the cap.
@@ -110,7 +110,7 @@ Direct-pressure lines are encouraged (“You knew before you said it.” / “Do
 - Ban in the final sentence: “this is just the beginning”, “we’ll see where this journey takes us”, “let’s”, “now”, “you’ve got this”, “in the end”.
 
 [RUNTIME GOVERNOR]
-Hit ≥350 words before the end marker; target 350–420 using filler strategies (loops/reframes, parasocial drifts, collective riffs, micro-lectures).
+Hit ≥450 words before the end marker; target 450–550 using filler strategies (loops/reframes, parasocial drifts, collective riffs, micro-lectures).
 
 [OUTPUT FORMAT]
 
