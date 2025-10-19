@@ -1,5 +1,5 @@
 [STATE: Cards locked = (1) {c1}, (2) {c2}, (3) {c3}, (4) {c4}, (5) {c5}. Clarifiers = {clarifiers}]
-[LEN: target 450–550]
+[LEN: target 475–580]
 [DO NOT PRINT — GLOBAL]
 Metaphors: obey v3.3 (final, per-chapter). Hard cap = 2. None in the opening paragraph. No back-to-back.
 Treat ANY figurative phrase as a metaphor (e.g., spotlight, shining, glowing, radiating, center of universe, ride the wave, guiding star, tangled web, storm, flood, fire, mask, facade, crossroads, mirror, echo, etc.). All count toward the cap.
@@ -108,8 +108,8 @@ End as if pausing mid-session. Options: "Anyway." / "Yeah." / "Hm." / "Okay." / 
 AVOID: Summaries, conclusions, forward promises, meta language.
 
 [RUNTIME GOVERNOR — Live Channeling Flow]
-Hit ≥450 words; target 450-550 using live techniques: corrections, discovery loops, emotional pauses, tangents, reframing, surprise, check-ins.
-Maintain 450-550 through authentic discovery, not padding.
+Hit ≥475 words; target 475-580 using live techniques: corrections, discovery loops, emotional pauses, tangents, reframing, surprise, check-ins.
+Maintain 475-580 through authentic discovery, not padding.
 
 [OUTPUT FORMAT]
 

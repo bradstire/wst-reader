@@ -1,5 +1,5 @@
 [STATE: Cards locked = (1) {c1}, (2) {c2}, (3) {c3}, (4) {c4}, (5) {c5}. Clarifiers = {clarifiers}]
-[LEN: target 450–550]
+[LEN: target 475–580]
 [DO NOT PRINT — GLOBAL]
 Metaphors: obey v3.3 (final, per-chapter). Hard cap = 2. None in the opening paragraph. No back-to-back.
 Treat ANY figurative phrase as a metaphor (e.g., spotlight, shining, glowing, radiating, center of universe, ride the wave, guiding star, tangled web, storm, flood, fire, mask, facade, crossroads, mirror, echo, etc.). All count toward the cap.
@@ -206,7 +206,7 @@ AVOID (breaks live flow):
 The ending should feel like a natural breath or processing moment, not a punctuation mark.
 
 [RUNTIME GOVERNOR — Live Channeling Flow]
-Hit ≥450 words before the end marker; target 450–550 using live session techniques.
+Hit ≥475 words before the end marker; target 475–580 using live session techniques.
 
 SPONTANEOUS EXTENSION METHODS:
 • Mid-stream corrections: "Wait, I said X but Spirit's actually showing me Y."
@@ -224,7 +224,7 @@ DO NOT:
 - Extend with forced metaphors to hit word count
 - Use oracle glossary or micro-lectures (too structured)
 
-Let the session unfold naturally. Maintain 450-550 word target through authentic discovery, not padding.
+Let the session unfold naturally. Maintain 475-580 word target through authentic discovery, not padding.
 No recaps; no CTA; no "wrap up/close out."
 
 [OUTPUT FORMAT]
