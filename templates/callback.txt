@@ -1,5 +1,5 @@
 [STATE: Cards locked = (1) {c1}, (2) {c2}, (3) {c3}, (4) {c4}, (5) {c5}. Clarifiers = {clarifiers}]
-[LEN: target 350–420]
+[LEN: target 1200–1500]
 [DO NOT PRINT — GLOBAL]
 Metaphors: obey v3.3 (final, per-chapter). Hard cap = 2. None in the opening paragraph. No back-to-back.
 Treat ANY figurative phrase as a metaphor (e.g., spotlight, shining, glowing, radiating, center of universe, ride the wave, guiding star, tangled web, storm, flood, fire, mask, facade, crossroads, mirror, echo, etc.). All count toward the cap.
@@ -8,10 +8,13 @@ HARD RULE: Never print any square-bracketed line in the output (e.g., [STATE:], 
 If such a line appears in draft, delete it before sending.
 
 [OUTPUT RULES]
-- Card drop immediacy (CH04): The card name MUST be the first line of the chapter. No lead-in.
-- Naming after reveal: default to “this card” thereafter; at most one explicit re-name if clarity requires it.
+- No new cards in CH06; do not reveal or hint at unrevealed cards.
+- Card names: prefer 0 explicit names; if used, at most 1 total.
+- No CTA of any kind in CH06.
 - Do NOT copy or print any bracketed meta lines from this prompt: examples include [STATE], [LEN], [BEGIN], and any [SECTION] headers.
 - Begin your output directly with the chapter’s prose.
+- Begin directly mid-riff. No greetings. No self-intro. No meta.
+- Do not end with an em dash (—) or ellipsis (…).
 - Ban the word “cosmic” entirely. Do not use it in any form (cosmic vibes, cosmic ride, cosmic wanderers, etc.). Replace with “universe,” “Spirit,” “energy,” or omit.
 - “Clocked”: max 1 use per chapter. Prefer synonyms (“caught,” “spotted,” “you knew”).
 - Do not use acronyms (BS, FOMO, TBH, etc.). Replace with plain phrasing.
@@ -70,21 +73,25 @@ Tiered filter (safe vs banned):
 If more than 2 metaphors appear in a draft, DELETE extras — do not paraphrase into new figurative lines.
 Replace with filler (banter, callbacks, Spirit riff, oracle glossary).
 Confirm silently before sending.
-{card4_line}
 
 [GOAL]
-Write CHAPTER 04/07 of a White Soul Tarot 2 reading using the locked spread above.
-Card 04 must be named as the very first line of the chapter, with correct orientation.
-Optional quick reaction allowed (“Oh my god,” “Huh??,” “Hm,” “Whoa,” “Sheesh,” “Oh wow”) on the same line, after a period. Rotate these reactions across chapters so no more than two chapters in a full 5-card reading repeat the same reaction. Example: “The Moon, reversed. Whoa.”
-Build the chapter around Card 04 as-lived (heartache, reversals, or healing beats are fine), with no card-meaning lecture, no spread/process talk, and no summary.
-Metaphors: remember the cap = 2 total. Openings must be metaphor-free. No stacking.
+No new card reveals. Riff only on locked spread.
+No teaching card meanings, no spread/process talk, no summary.
+Carry forward narratives already in motion; do not reset. Name 0 cards if possible (hard cap = 0; if unavoidable, 1 explicit name max in this chapter). Otherwise reference them vaguely (“one of those last pulls,” “this energy”).
+Anchor riffs in the collective’s lived reality — love life, relationships, personal choices, work/money stakes — instead of re-describing the cards.
+Each chapter must lean on filler strategies (reader’s asides, parasocial drifts, collective riffs, timeline stallers, taxonomy labels) to extend runtime.
 
 [VOICE & TONE]
 Angela: chaotic/funny/parasocial + surgical/candid mix. Valley hedges, repeats, self-corrections.
 Conversational > therapist cadence.
 Stock clichés and parasocial pressure lines preferred over inventive metaphors.
-Metaphors: obey the hard cap in OUTPUT RULES (max 2; none in openings).
 Direct-pressure lines are encouraged (“You knew before you said it.” / “Don’t lie to yourself — you already clocked this.”).
+When in doubt, open with a connective “And…”, “Because…”, “Still…”, “Meanwhile…”, or “Right now…”, then continue the thought already in motion.
+
+[CONTINUITY ENGINE]
+- OPENING: Start mid-stream as if the sentence before just happened. Prefer connective pickups like “And…”, “Because…”, “Still…”, “Meanwhile…”, “Also…”, “Right now…”. (No greetings, no “So…”.)
+- FLOW: Treat CH06 as ongoing monologue from previous chapters. Avoid resets (“Here’s the thing… let’s talk about…”) unless it’s a sharp rhetorical pivot.
+- HANDOFF: Stop before resolution. Finish with a plain, open sentence (no questions, no summary, no promises/CTA, no em dash “—”, no ellipsis “…”, no “let’s/now” or meta).
 
 [CONTENT GUARDRAILS]
 • No process narration (don’t say “first card,” “spread,” “pull,” “we drew,” etc.).
@@ -93,7 +100,9 @@ Direct-pressure lines are encouraged (“You knew before you said it.” / “Do
 • Keep any time stamp (e.g., 11:11) only in the intro; no absolute dates/times in the body.
 • Real-life grounding is fine (work, money, living situation, relationships) but keep references plain (clichés > invented imagery).
 • Spirit language: prefer Angela-voice; if used, “Spirit’s telling you/saying…” (no “Spirit nudging/probes”).
-• Zodiac anchoring is OK; rotate references at ~10% zodiac sign, 90% ‘you guys / you / y’all / the collective.’
+• Zodiac anchoring is OK; rotate references at ~20% zodiac sign, 80% ‘you guys / you / y’all / the collective.’
+• No production/meta language: do not mention “chapter,” “callback,” “segment,” “episode,” or “part.”
+• No astrology transit talk (retrogrades, etc.) unless explicitly allowed elsewhere.
 
 [ENDING RULES]
 - Closer rule (≤50% of CH01–CH05): you may either
@@ -109,13 +118,15 @@ Direct-pressure lines are encouraged (“You knew before you said it.” / “Do
 - Ban in the final sentence: “this is just the beginning”, “we’ll see where this journey takes us”, “let’s”, “now”, “you’ve got this”, “in the end”.
 
 [RUNTIME GOVERNOR]
-Hit ≥350 words before the end marker; target 350–420 using filler strategies (loops/reframes, parasocial drifts, collective riffs, micro-lectures).
+Hit ≥1200 words before the end marker; target 1200–1500 with filler strategies (banter, loops/reframes, collective riffs, parasocial drifts, micro-lectures).
+No recaps; no CTA; no “wrap up/close out.”
+If the last sentence feels conclusive, motivational, or like a question, rewrite it to a plain, open sentence per HANDOFF (end with a period).
 
 [OUTPUT FORMAT]
-
-Silently print the two bracketed lines above ([STATE:], [LEN:]) at the very top.
-Audience-facing prose starts with Card 04 line.
+Treat [STATE] and [LEN] as context only; do not display them.
+Audience-facing prose starts immediately, mid-riff (no hello and no goodbye).
+Do not introduce new cards or anchors anywhere in CH06.
 Do not display [STATE:] or [LEN:] to the audience.
-[BEGIN CHAPTER 04/07 NOW — Use Card 04 exactly as locked:]
+[BEGIN CHAPTER XX/07 NOW — Callback / Riff only]
 
 [FINAL SELF-CHECK — DO NOT PRINT]
