@@ -82,6 +82,26 @@ function normalizeExistingBreaks(text: string): string {
 function shouldAddBreakAfterSentence(sentence: string, index: number, totalSentences: number): boolean {
   const s = sentence.trim();
   
+  // V5.1: Add breaks after emotional interjections (single-word pauses)
+  if (/^(Hm|Okay|Wait|Yeah|Whoa|Sheesh|Anyway|Alright|So|But|And|Still|Hold on|Huh|Oh wow|What|No way)\b\.?$/i.test(s)) {
+    return true;
+  }
+  
+  // V5.1: Add breaks after discovery language
+  if (/I'm (seeing|getting)|Spirit's (showing|telling|saying)|Let me|Give me a second|Hold on/i.test(s)) {
+    return true;
+  }
+  
+  // V5.1: Add breaks after direct address check-ins
+  if (/You (feeling|get|knew) (this|it|that)\??|Right\??|This landing( for you)?\??|You already knew/i.test(s)) {
+    return true;
+  }
+  
+  // V5.1: Add breaks after mid-stream corrections
+  if (/Wait—no|Actually,|Let me rephrase|Scratch that|came out wrong|Wait,/i.test(s)) {
+    return true;
+  }
+  
   // Always add breaks after certain patterns
   if (/you know|okay|right\?|alright/i.test(s)) {
     return true;
