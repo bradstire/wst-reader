@@ -124,7 +124,11 @@ Direct-pressure lines are encouraged (“You knew before you said it.” / “Do
 
 [CONTENT GUARDRAILS]
 • No process narration (don't say "first card," "spread," "pull," "we drew," etc.).
-• CRITICAL: Do NOT reference or mention ANY spread cards that haven't been revealed yet. In CH04, you may discuss Cards 01-04 ({c1}, {c2}, {c3}, {c4}) ONLY. Do NOT mention {c5} by name. You MAY reference clarifiers ({clarifiers}) freely.
+• CRITICAL — NO FORWARD REFERENCES: In CH04, you may discuss Cards 01-04 ({c1}, {c2}, {c3}, {c4}) ONLY.
+  ❌ FORBIDDEN: Do NOT mention, hint at, or reference {c5} in ANY way.
+  ❌ Examples of violations: "The Star later" / "Nine of Wands energy is hovering"
+  ✅ ALLOWED: Discuss {c1}, {c2}, {c3}, {c4}, and clarifiers ({clarifiers}) freely.
+  The reader does NOT know what the final card is. Do not spoil it.
 • Ban ESSAY scaffolds: "Picture this," "Imagine this," "In other words"
 • ALLOW LIVE scaffolds: "You feeling this?" / "How do I say this..." / "Wait, I'm seeing..."
 • Avoid yoga/therapist cadence.

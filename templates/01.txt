@@ -196,7 +196,11 @@ Direct-pressure lines are encouraged ("You knew before you said it." / "Don't li
 
 [CONTENT GUARDRAILS]
 • No process narration (don't say "first card," "spread," "pull," "we drew," etc.).
-• CRITICAL: Do NOT reference or mention ANY spread cards that haven't been revealed yet. In CH01, you may ONLY discuss Card 01 ({c1}). Do NOT mention {c2}, {c3}, {c4}, or {c5} by name (e.g., "The Lovers later" or "Six of Pentacles after that"). You MAY reference clarifiers ({clarifiers}) freely.
+• CRITICAL — NO FORWARD REFERENCES: In CH01, you may ONLY discuss Card 01 ({c1}). 
+  ❌ FORBIDDEN: Do NOT mention, hint at, or reference {c2}, {c3}, {c4}, or {c5} in ANY way.
+  ❌ Examples of violations: "The Eight of Wands energy is hovering" / "Six of Pentacles later" / "Two of Cups after that"
+  ✅ ALLOWED: Discuss {c1} and clarifiers ({clarifiers}) freely.
+  The reader does NOT know what cards are coming next. Do not spoil future reveals.
 • Ban ESSAY scaffolds (structured, pre-written feeling):
   - "Picture this," / "Imagine this," / "Let's say that..."
   - "In other words," / "To put it simply," / "What I mean is..." / "Essentially,"

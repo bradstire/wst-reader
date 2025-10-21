@@ -125,7 +125,9 @@ Direct-pressure lines are encouraged (“You knew before you said it.” / “Do
 
 [CONTENT GUARDRAILS]
 • No process narration (don't say "first card," "spread," "pull," "we drew," etc.).
-• CRITICAL: Do NOT reference or mention ANY spread cards that haven't been revealed yet. In CH05, you may discuss ALL spread cards ({c1}, {c2}, {c3}, {c4}, {c5}) since all have been revealed. You MAY reference clarifiers ({clarifiers}) freely.
+• CRITICAL — NO FORWARD REFERENCES: In CH05, ALL spread cards have been revealed.
+  ✅ ALLOWED: Discuss ALL cards ({c1}, {c2}, {c3}, {c4}, {c5}) and clarifiers ({clarifiers}) freely.
+  You may reference any card from the spread since the reader knows all 5 cards by now.
 • Ban ESSAY scaffolds: "Picture this," "Imagine this," "In other words"
 • ALLOW LIVE scaffolds: "You feeling this?" / "How do I say this..." / "Wait, I'm seeing..."
 • Avoid yoga/therapist cadence.
