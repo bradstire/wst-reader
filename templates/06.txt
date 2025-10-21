@@ -110,6 +110,7 @@ Direct-pressure lines are encouraged ("You knew before you said it." / "Don't li
 
 [CONTENT GUARDRAILS]
 • No process narration (don't say "first card," "spread," "pull," "we drew," etc.).
+• CRITICAL: In CH06 (finale), you may discuss ALL spread cards ({c1}, {c2}, {c3}, {c4}, {c5}) since all have been revealed. You MAY reference clarifiers ({clarifiers}) freely. This is the closing chapter - weave the full spread narrative together.
 • Ban ESSAY scaffolds: "Picture this," "Imagine this," "In other words"
 • ALLOW LIVE scaffolds: "You feeling this?" / "How do I say this..." / "Wait, I'm seeing..."
 • Avoid yoga/therapist cadence.
