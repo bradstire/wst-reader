@@ -180,20 +180,20 @@ export function applyBreaks(stitched: string): string {
         const cardRevealPattern = /^(?:The\s+)?(?:Fool|Magician|High\s+Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel\s+of\s+Fortune|Justice|Hanged\s+Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judgement|World|Ace|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Page|Knight|Queen|King)(?:\s+of\s+(?:Wands|Cups|Swords|Pentacles))?(?:,\s*reversed)?[.,]\s*(?:(?:Oh\s+(?:my\s+)?god|Huh\?\?|Hmm?|Whoa|Sheesh|Oh\s+wow)[.!?]?)?\s*$/i;
         const isNextSentenceCardReveal = cardRevealPattern.test(nextSentence.trim());
         
-        // Check if current sentence has a mid-sentence card reveal
-        const currentIsMidSentenceCardReveal = isMidSentenceCardReveal(sentence);
+        // Check if next sentence has a mid-sentence card reveal
+        const nextIsMidSentenceCardReveal = isMidSentenceCardReveal(nextSentence);
         
-        // Priority 1: If next sentence is a standalone card reveal, add longer pause (3-5s)
+        // Priority 1: If next sentence is a standalone card reveal, add longer pause (3-5s) BEFORE it
         if (isNextSentenceCardReveal) {
           const cardRevealPause = Math.random() * 2 + 3; // 3-5 seconds for sound FX
           resultSentences.push(`<break time="${Math.round(cardRevealPause * 10) / 10}s" />`);
         } 
-        // Priority 2: If current sentence is a mid-sentence card reveal, add shorter pause (2-3s)
-        else if (currentIsMidSentenceCardReveal) {
+        // Priority 2: If next sentence is a mid-sentence card reveal, add shorter pause (2-3s) BEFORE it
+        else if (nextIsMidSentenceCardReveal) {
           const midCardPause = Math.random() * 1 + 2; // 2-3 seconds for mid-sentence reveals
           resultSentences.push(`<break time="${Math.round(midCardPause * 10) / 10}s" />`);
         }
-        // Priority 3: Regular break logic
+        // Priority 3: Regular break logic (no card reveal coming next)
         else {
           const shouldAddBreak = shouldAddBreakAfterSentence(sentence, i, sentences.length);
           
