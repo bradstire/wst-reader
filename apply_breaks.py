@@ -195,8 +195,8 @@ def add_breaks_to_text(text):
                 # Only add pre-card pause if this is the first time we see this card
                 if card_name not in revealed_cards:
                     revealed_cards.add(card_name)
-                    # Add pre-card-reveal pause (1-1.5 seconds)
-                    pre_card_pause = round(random.uniform(1.0, 1.5), 1)
+                    # Add pre-card-reveal pause (2-2.5 seconds) - increased for card flip sound insertion
+                    pre_card_pause = round(random.uniform(2.0, 2.5), 1)
                     result_sentences.append(f'<break time="{pre_card_pause}s" />')
             
             result_sentences.append(sentence)
