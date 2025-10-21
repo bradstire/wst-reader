@@ -22,25 +22,26 @@ from pathlib import Path
 from datetime import datetime
 
 # Break duration ranges and their weighted distribution
+# Adjusted to target 14-15 minute total duration (up from 11 minutes)
 BREAK_RANGES = {
     'micro': {
         'range': (0.5, 2.0),
-        'weight': 0.65,  # 65% of breaks
+        'weight': 0.55,  # 55% of breaks (reduced from 65%)
         'description': 'micro-break, breathmark'
     },
     'short': {
         'range': (2.0, 5.0),
-        'weight': 0.225,  # 22.5% of breaks
+        'weight': 0.25,  # 25% of breaks (up from 22.5%)
         'description': 'short reflective break'
     },
     'medium': {
         'range': (5.0, 10.0),
-        'weight': 0.075,  # 7.5% of breaks
+        'weight': 0.12,  # 12% of breaks (up from 7.5%)
         'description': 'medium weight break'
     },
     'extended': {
         'range': (10.0, 12.0),
-        'weight': 0.05,  # 5% of breaks
+        'weight': 0.08,  # 8% of breaks (up from 5%)
         'description': 'extended break cap'
     }
 }
