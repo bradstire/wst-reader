@@ -165,7 +165,8 @@ export function applyBreaks(stitched: string): string {
     
     // Check if first sentence is a standalone card reveal or has mid-sentence card
     const cardRevealPattern = /^(?:The\s+)?(?:Fool|Magician|High\s+Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel\s+of\s+Fortune|Justice|Hanged\s+Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judgement|World|Ace|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Page|Knight|Queen|King)(?:\s+of\s+(?:Wands|Cups|Swords|Pentacles))?(?:,\s*reversed)?[.,]/i;
-    paragraphStartsWithCard.push(cardRevealPattern.test(firstSentence));
+    const hasCard = cardRevealPattern.test(firstSentence);
+    paragraphStartsWithCard.push(hasCard);
   }
   
   // Second pass: process paragraphs with card-aware break placement
