@@ -22,26 +22,28 @@ from pathlib import Path
 from datetime import datetime
 
 # Break duration ranges and their weighted distribution
-# Adjusted to target 14-15 minute total duration (up from 11 minutes)
+# Adjusted to target 15 minute total duration
+# Note: Pre-realization (0.5-1s) and pre-card-reveal (1-1.5s) breaks are added separately
+# These weights are for general sentence breaks, rebalanced to maintain 15min target
 BREAK_RANGES = {
     'micro': {
         'range': (0.5, 2.0),
-        'weight': 0.55,  # 55% of breaks (reduced from 65%)
+        'weight': 0.58,  # 58% of breaks (rebalanced with new pre-breaks)
         'description': 'micro-break, breathmark'
     },
     'short': {
         'range': (2.0, 5.0),
-        'weight': 0.25,  # 25% of breaks (up from 22.5%)
+        'weight': 0.24,  # 24% of breaks
         'description': 'short reflective break'
     },
     'medium': {
         'range': (5.0, 10.0),
-        'weight': 0.12,  # 12% of breaks (up from 7.5%)
+        'weight': 0.11,  # 11% of breaks
         'description': 'medium weight break'
     },
     'extended': {
         'range': (10.0, 12.0),
-        'weight': 0.08,  # 8% of breaks (up from 5%)
+        'weight': 0.07,  # 7% of breaks
         'description': 'extended break cap'
     }
 }
@@ -117,6 +119,9 @@ def add_breaks_to_text(text):
     # First normalize any existing breaks in body
     body = normalize_existing_breaks(body)
     
+    # Track card names that have been revealed (for first-time reveal detection)
+    revealed_cards = set()
+    
     # Split into paragraphs first to preserve structure
     paragraphs = body.split('\n\n')
     processed_paragraphs = []
@@ -132,6 +137,25 @@ def add_breaks_to_text(text):
         result_sentences = []
         
         for i, sentence in enumerate(sentences):
+            # Check if this sentence starts with a realization phrase
+            realization_match = re.match(r'^(Wait|Hold up|Hold on|I\'m seeing|Hm|Mm)', sentence, re.IGNORECASE)
+            if realization_match:
+                # Add pre-realization pause (0.5-1 second)
+                pre_pause = round(random.uniform(0.5, 1.0), 1)
+                result_sentences.append(f'<break time="{pre_pause}s" />')
+            
+            # Check for first-time card reveal
+            card_match = re.search(r'The\s+(?:Ace|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Page|Knight|Queen|King)\s+of\s+(?:Wands|Cups|Swords|Pentacles)|The\s+(?:Fool|Magician|High Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel of Fortune|Justice|Hanged Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judgement|World)(?:,\s+(?:reversed|upright))?', sentence, re.IGNORECASE)
+            
+            if card_match:
+                card_name = card_match.group(0).lower()
+                # Only add pre-card pause if this is the first time we see this card
+                if card_name not in revealed_cards:
+                    revealed_cards.add(card_name)
+                    # Add pre-card-reveal pause (1-1.5 seconds)
+                    pre_card_pause = round(random.uniform(1.0, 1.5), 1)
+                    result_sentences.append(f'<break time="{pre_card_pause}s" />')
+            
             result_sentences.append(sentence)
             
             # Skip adding breaks after the last sentence
