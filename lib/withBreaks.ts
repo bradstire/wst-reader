@@ -108,10 +108,8 @@ function shouldAddBreakAfterSentence(sentence: string, index: number, totalSente
     return true;
   }
   
-  // Add breaks after card reveals (sentences containing card names)
-  if (/\b(?:The|Ace|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Page|Knight|Queen|King|of|Wands|Cups|Swords|Pentacles|Fool|Magician|High Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel of Fortune|Justice|Hanged Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judgement|World)\b/i.test(s)) {
-    return true;
-  }
+  // NOTE: Card reveal breaks are now handled separately in applyBreaks()
+  // to distinguish between standalone card reveals (3-5s) and mid-sentence reveals (2-3s)
   
   // Add breaks after strong declarative statements
   if (/\.\s*$/.test(s) && s.length > 50) {
@@ -134,6 +132,20 @@ function shouldAddBreakAfterSentence(sentence: string, index: number, totalSente
   }
   
   return false;
+}
+
+function isMidSentenceCardReveal(sentence: string): boolean {
+  // Check if sentence contains a card name but is NOT a standalone card reveal
+  // Mid-sentence patterns: "I'm seeing... Seven of Swords." or "boom, The Lovers."
+  const containsCard = /(?:The\s+)?(?:Fool|Magician|High\s+Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel\s+of\s+Fortune|Justice|Hanged\s+Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judgement|World|Ace|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Page|Knight|Queen|King)(?:\s+of\s+(?:Wands|Cups|Swords|Pentacles))?(?:,\s*reversed)?/i.test(sentence);
+  
+  if (!containsCard) return false;
+  
+  // Check if it's a standalone card reveal (card name only, with optional reaction)
+  const isStandalone = /^(?:The\s+)?(?:Fool|Magician|High\s+Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel\s+of\s+Fortune|Justice|Hanged\s+Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judgement|World|Ace|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Page|Knight|Queen|King)(?:\s+of\s+(?:Wands|Cups|Swords|Pentacles))?(?:,\s*reversed)?[.,]\s*(?:(?:Oh\s+(?:my\s+)?god|Huh\?\?|Hmm?|Whoa|Sheesh|Oh\s+wow)[.!?]?)?\s*$/i.test(sentence.trim());
+  
+  // If it contains a card but is NOT standalone, it's a mid-sentence reveal
+  return !isStandalone;
 }
 
 export function applyBreaks(stitched: string): string {
@@ -168,12 +180,21 @@ export function applyBreaks(stitched: string): string {
         const cardRevealPattern = /^(?:The\s+)?(?:Fool|Magician|High\s+Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel\s+of\s+Fortune|Justice|Hanged\s+Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judgement|World|Ace|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Page|Knight|Queen|King)(?:\s+of\s+(?:Wands|Cups|Swords|Pentacles))?(?:,\s*reversed)?[.,]\s*(?:(?:Oh\s+(?:my\s+)?god|Huh\?\?|Hmm?|Whoa|Sheesh|Oh\s+wow)[.!?]?)?\s*$/i;
         const isNextSentenceCardReveal = cardRevealPattern.test(nextSentence.trim());
         
-        // If next sentence is a card reveal, add a pause for card sound FX (3-5s)
+        // Check if current sentence has a mid-sentence card reveal
+        const currentIsMidSentenceCardReveal = isMidSentenceCardReveal(sentence);
+        
+        // Priority 1: If next sentence is a standalone card reveal, add longer pause (3-5s)
         if (isNextSentenceCardReveal) {
           const cardRevealPause = Math.random() * 2 + 3; // 3-5 seconds for sound FX
           resultSentences.push(`<break time="${Math.round(cardRevealPause * 10) / 10}s" />`);
-        } else {
-          // Regular break logic
+        } 
+        // Priority 2: If current sentence is a mid-sentence card reveal, add shorter pause (2-3s)
+        else if (currentIsMidSentenceCardReveal) {
+          const midCardPause = Math.random() * 1 + 2; // 2-3 seconds for mid-sentence reveals
+          resultSentences.push(`<break time="${Math.round(midCardPause * 10) / 10}s" />`);
+        }
+        // Priority 3: Regular break logic
+        else {
           const shouldAddBreak = shouldAddBreakAfterSentence(sentence, i, sentences.length);
           
           if (shouldAddBreak) {
