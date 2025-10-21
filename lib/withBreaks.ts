@@ -161,12 +161,23 @@ export function applyBreaks(stitched: string): string {
       
       // Skip adding breaks after the last sentence
       if (i < sentences.length - 1) {
-        // Determine if we should add a break after this sentence
-        const shouldAddBreak = shouldAddBreakAfterSentence(sentence, i, sentences.length);
+        const nextSentence = sentences[i + 1];
         
-        if (shouldAddBreak) {
-          const duration = getRandomBreakDuration();
-          resultSentences.push(`<break time="${duration}s" />`);
+        // Check if the NEXT sentence is a card reveal (card name at the start)
+        const isNextSentenceCardReveal = /^(?:The\s+)?(?:Fool|Magician|High\s+Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel\s+of\s+Fortune|Justice|Hanged\s+Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judgement|World|Ace|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Page|Knight|Queen|King)\s+of\s+(?:Wands|Cups|Swords|Pentacles)|^(?:The\s+)?(?:Fool|Magician|High\s+Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel\s+of\s+Fortune|Justice|Hanged\s+Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judgement|World)(?:,|\.)/.test(nextSentence);
+        
+        // If next sentence is a card reveal, add a longer dramatic pause (7-11s)
+        if (isNextSentenceCardReveal) {
+          const dramaticPause = Math.random() * 4 + 7; // 7-11 seconds
+          resultSentences.push(`<break time="${Math.round(dramaticPause * 10) / 10}s" />`);
+        } else {
+          // Regular break logic
+          const shouldAddBreak = shouldAddBreakAfterSentence(sentence, i, sentences.length);
+          
+          if (shouldAddBreak) {
+            const duration = getRandomBreakDuration();
+            resultSentences.push(`<break time="${duration}s" />`);
+          }
         }
       }
     }

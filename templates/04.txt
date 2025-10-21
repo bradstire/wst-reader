@@ -109,8 +109,9 @@ Confirm silently before sending.
 
 [GOAL]
 Write CHAPTER 04/07 of a White Soul Tarot 2 reading using the locked spread above.
-Card 04 must be named as the very first line of the chapter, with correct orientation.
-Optional quick reaction allowed (“Oh my god,” “Huh??,” “Hm,” “Whoa,” “Sheesh,” “Oh wow”) on the same line, after a period. Rotate these reactions across chapters so no more than two chapters in a full 5-card reading repeat the same reaction. Example: “The Moon, reversed. Whoa.”
+Card 04 must be named as the very first line of the chapter (or after optional transition), with correct orientation.
+CARD REVEAL PAUSE: Before stating the card name, add a dramatic pause in the preceding sentence/paragraph to build anticipation (e.g., end previous thought, then reveal card).
+Optional quick reaction allowed ("Oh my god," "Huh??," "Hmm," "Whoa," "Sheesh," "Oh wow") on the same line, after a period. Rotate these reactions across chapters so no more than two chapters in a full 5-card reading repeat the same reaction. Example: "The Moon, reversed. Whoa."
 Build the chapter around Card 04 as-lived (heartache, reversals, or healing beats are fine), with no card-meaning lecture, no spread/process talk, and no summary.
 Metaphors: remember the cap = 2 total. Openings must be metaphor-free. No stacking.
 

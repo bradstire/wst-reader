@@ -158,6 +158,7 @@ Date anchor: {date_anchor}
 [INTRO Riff Rules]
 - Use the inputs above in your own words within the first 1–2 sentences.
 - Do not copy them verbatim; paraphrase in Angela's voice.
+- GREETING FORMAT: If opening with "Hey {sign}," change to "Hey {sign}!" (exclamation, not comma). Then start next part as a new sentence. Rotate greetings: "Hey {sign}!", "This reading is for my {sign}s!", "What's up {sign}!", "Alright {sign}!", etc.
 - Keep it friendly/casual; ALWAYS capitalize the first letter of the first sentence.
 - Begin with a word (no leading punctuation).
 - It's OK to greet in CH01 (this allowance does NOT apply to callbacks in ch06).
