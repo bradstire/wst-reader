@@ -151,9 +151,29 @@ function isMidSentenceCardReveal(sentence: string): boolean {
 export function applyBreaks(stitched: string): string {
   // Split into paragraphs first to preserve structure
   const paragraphs = stitched.split('\n\n');
+  
+  // First pass: identify which paragraphs start with card reveals
+  const paragraphStartsWithCard: boolean[] = [];
+  for (const paragraph of paragraphs) {
+    if (!paragraph.trim()) {
+      paragraphStartsWithCard.push(false);
+      continue;
+    }
+    
+    const sentences = paragraph.trim().split(/(?<=[.!?])\s+/);
+    const firstSentence = sentences[0]?.trim() || '';
+    
+    // Check if first sentence is a standalone card reveal or has mid-sentence card
+    const cardRevealPattern = /^(?:The\s+)?(?:Fool|Magician|High\s+Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel\s+of\s+Fortune|Justice|Hanged\s+Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judgement|World|Ace|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Page|Knight|Queen|King)(?:\s+of\s+(?:Wands|Cups|Swords|Pentacles))?(?:,\s*reversed)?[.,]/i;
+    paragraphStartsWithCard.push(cardRevealPattern.test(firstSentence));
+  }
+  
+  // Second pass: process paragraphs with card-aware break placement
   const processedParagraphs: string[] = [];
   
-  for (const paragraph of paragraphs) {
+  for (let p = 0; p < paragraphs.length; p++) {
+    const paragraph = paragraphs[p];
+    
     if (!paragraph.trim()) {
       processedParagraphs.push(paragraph);
       continue;
@@ -171,12 +191,20 @@ export function applyBreaks(stitched: string): string {
       const sentence = sentences[i];
       resultSentences.push(sentence);
       
-      // Skip adding breaks after the last sentence
-      if (i < sentences.length - 1) {
+      // Check if we're at the end of this paragraph AND the next paragraph starts with a card
+      const isLastSentenceInParagraph = i === sentences.length - 1;
+      const nextParagraphHasCard = p < paragraphs.length - 1 && paragraphStartsWithCard[p + 1];
+      
+      if (isLastSentenceInParagraph && nextParagraphHasCard) {
+        // Add 3-5s pause before the card reveal in the next paragraph
+        const cardRevealPause = Math.random() * 2 + 3;
+        resultSentences.push(`<break time="${Math.round(cardRevealPause * 10) / 10}s" />`);
+      } 
+      // Skip adding breaks after the last sentence (unless it's before a card paragraph)
+      else if (i < sentences.length - 1) {
         const nextSentence = sentences[i + 1];
         
-        // Check if the NEXT sentence is a standalone card reveal
-        // Pattern: Card name, optional comma/period, optional reaction (Oh wow, Huh??, etc.), then end
+        // Check if the NEXT sentence (within same paragraph) is a standalone card reveal
         const cardRevealPattern = /^(?:The\s+)?(?:Fool|Magician|High\s+Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel\s+of\s+Fortune|Justice|Hanged\s+Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judgement|World|Ace|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Page|Knight|Queen|King)(?:\s+of\s+(?:Wands|Cups|Swords|Pentacles))?(?:,\s*reversed)?[.,]\s*(?:(?:Oh\s+(?:my\s+)?god|Huh\?\?|Hmm?|Whoa|Sheesh|Oh\s+wow)[.!?]?)?\s*$/i;
         const isNextSentenceCardReveal = cardRevealPattern.test(nextSentence.trim());
         
