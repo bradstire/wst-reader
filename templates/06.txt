@@ -11,7 +11,7 @@ If such a line appears in draft, delete it before sending.
 Channeling in real-time. Discovered, not written. Spontaneity > polish.
 DISCOVERY: "I'm seeing..." / "Wait..." / "This is interesting..."
 CORRECTIONS: "Wait—no." / "Let me rephrase..." Pivots encouraged.
-INTERJECTIONS: "Hm." / "Whoa." / "Okay." DIRECT ADDRESS: "You feeling this?"
+INTERJECTIONS: "Hmm." / "Whoa." / "Okay." DIRECT ADDRESS: "You feeling this?"
 HARD BAN: Process narration, meta, essay language. Sound spoken, not written.
 
 [OUTPUT RULES]
@@ -23,7 +23,7 @@ HARD BAN: Process narration, meta, essay language. Sound spoken, not written.
 - Do NOT copy or print any bracketed meta lines from this prompt: examples include [STATE], [LEN], [BEGIN], and any [SECTION] headers.
 - Begin your output directly with the chapter's prose.
 - Begin mid-flow, as if continuing from previous card's energy.
-- ALLOW live session markers: "Okay so..." / "Wait..." / "Hm." / "Alright..." / "So here's where this gets real."
+- ALLOW live session markers: "Okay so..." / "Wait..." / "Hmm." / "Alright..." / "So here's where this gets real."
 - AVOID: Greetings ("Hey," "Hi"), meta language ("we're at the end," "finally," "last chapter"), self-intro ("Angela here"), announcements ("Let's get into it")
 - The opening should feel like a spontaneous pivot, not a formal start.
 - Ban the word "cosmic" entirely. Do not use it in any form (cosmic vibes, cosmic ride, cosmic wanderers, etc.). Replace with "universe," "Spirit," "energy," or omit.
@@ -123,7 +123,7 @@ Direct-pressure lines are encouraged ("You knew before you said it." / "Don't li
 Wind down naturally, THEN drop CTA as an afterthought.
 CTA (required): "Like + Subscribe" (~90%) / "Tell your group chat" (~80%)
 ✅ "Anyway. If this resonated, Like + Subscribe. Tell your group chat."
-✅ "Hm. Okay. Real quick—Like + Subscribe if you want more. Share it."
+✅ "Hmm. Okay. Real quick—Like + Subscribe if you want more. Share it."
 ❌ "As we conclude, please Like + Subscribe." (too formal)
 BEFORE CTA: Wind down naturally, no summary, no meta about "ending."
 

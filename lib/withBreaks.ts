@@ -84,7 +84,7 @@ function shouldAddBreakAfterSentence(sentence: string, index: number, totalSente
   const s = sentence.trim();
   
   // V5.1: Add breaks after emotional interjections (single-word pauses)
-  if (/^(Hm|Okay|Wait|Yeah|Whoa|Sheesh|Anyway|Alright|So|But|And|Still|Hold on|Huh|Oh wow|What|No way)\b\.?$/i.test(s)) {
+  if (/^(Hmm?|Okay|Wait|Yeah|Whoa|Sheesh|Anyway|Alright|So|But|And|Still|Hold on|Huh|Oh wow|What|No way)\b\.?$/i.test(s)) {
     return true;
   }
   
