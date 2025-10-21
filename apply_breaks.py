@@ -64,6 +64,46 @@ def get_random_break_duration():
     # Fallback to micro break
     return round(random.uniform(0.5, 2.0), 1)
 
+def sanitize_break_combinations(text):
+    """
+    Sanitize problematic break combinations that cause TTS artifacts.
+    
+    Known Issues:
+    1. Card reveal + medium/long break (3s+) + reaction ("Oh wow", etc) + short break (1-2s)
+       → Causes glitches after the reaction
+       → Fix: Adjust post-reaction break to 2.5-3.5s range
+    
+    Add new patterns as discovered during QC.
+    """
+    
+    # Pattern 1: Card reveal + medium/long break + reaction + short break
+    # Example: "The Emperor, upright. <break time="3.8s" /> Oh wow. <break time="1.1s" />"
+    # Fix: Change the break after "Oh wow." to 2.5-3.5s to avoid artifacts
+    
+    pattern1 = re.compile(
+        r'((?:The|Ace|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Page|Knight|Queen|King)\s+(?:of\s+)?(?:Wands|Cups|Swords|Pentacles|Fool|Magician|High Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel of Fortune|Justice|Hanged Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judgement|World)(?:,\s+(?:reversed|upright))?\.)\s*<break time="([3-9]|1[0-2])(?:\.\d+)?s"\s*/>\s*((?:Oh wow|Huh\?\?|Sheesh|Whoa|Oh my god|Mm-hm|Hm|Mmm)\.)\s*<break time="([0-2])(?:\.\d+)?s"\s*/>',
+        re.IGNORECASE
+    )
+    
+    def replace_pattern1(match):
+        card_reveal = match.group(1)
+        first_break_time = match.group(2)
+        reaction = match.group(3)
+        problematic_break_time = match.group(4)
+        
+        # Replace the short problematic break with a safer 2.5-3.5s break
+        safe_break = round(random.uniform(2.5, 3.5), 1)
+        
+        return f'{card_reveal} <break time="{first_break_time}s" /> {reaction} <break time="{safe_break}s" />'
+    
+    text = pattern1.sub(replace_pattern1, text)
+    
+    # Add more patterns here as discovered during QC
+    # Pattern 2: [Future pattern]
+    # Pattern 3: [Future pattern]
+    
+    return text
+
 def normalize_existing_breaks(text):
     """Normalize any existing break tags to the standard format."""
     # Match various break tag formats and normalize them
@@ -176,6 +216,10 @@ def add_breaks_to_text(text):
     
     # Join paragraphs with double newlines to preserve structure
     processed_body = '\n\n'.join(processed_paragraphs)
+    
+    # Apply sanitization to fix problematic break combinations
+    processed_body = sanitize_break_combinations(processed_body)
+    
     return header + processed_body
 
 def should_add_break_after_sentence(sentence, index, total_sentences):
