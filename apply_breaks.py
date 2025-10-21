@@ -119,6 +119,9 @@ def add_breaks_to_text(text):
     # First normalize any existing breaks in body
     body = normalize_existing_breaks(body)
     
+    # Normalize "Hm." to "Hmm." for better TTS pronunciation
+    body = re.sub(r'\bHm\.', 'Hmm.', body)
+    
     # Track card names that have been revealed (for first-time reveal detection)
     revealed_cards = set()
     
