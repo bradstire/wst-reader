@@ -8,9 +8,16 @@ export function getConfig() {
   ];
   const currentMonth = monthNames[now.getMonth()];
   
+  // Add ordinal suffix (1st, 2nd, 3rd, 4th, etc.)
+  const day = now.getDate();
+  let suffix = 'th';
+  if (day === 1 || day === 21 || day === 31) suffix = 'st';
+  else if (day === 2 || day === 22) suffix = 'nd';
+  else if (day === 3 || day === 23) suffix = 'rd';
+  
   return {
     sign: "Gemini", // default
-    date_anchor: `${currentMonth} ${now.getDate()}`, // e.g., "October 16"
+    date_anchor: `${currentMonth} ${day}${suffix}`, // e.g., "October 21st"
     output_dir: "output",
     mode: "generate",
     chapters: "all",

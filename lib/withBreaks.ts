@@ -1,22 +1,23 @@
 // Break duration ranges and their weighted distribution (ported from Python)
+// V5.1.2-final: Doubled durations to reach 15min total break time target
 const BREAK_RANGES = {
   'micro': {
-    range: [0.5, 2.0],
+    range: [1.0, 4.0],  // was [0.5, 2.0]
     weight: 0.65,  // 65% of breaks
     description: 'micro-break, breathmark'
   },
   'short': {
-    range: [2.0, 5.0],
+    range: [4.0, 10.0],  // was [2.0, 5.0]
     weight: 0.225,  // 22.5% of breaks
     description: 'short reflective break'
   },
   'medium': {
-    range: [5.0, 10.0],
+    range: [10.0, 20.0],  // was [5.0, 10.0]
     weight: 0.075,  // 7.5% of breaks
     description: 'medium weight break'
   },
   'extended': {
-    range: [10.0, 12.0],
+    range: [20.0, 24.0],  // was [10.0, 12.0]
     weight: 0.05,  // 5% of breaks
     description: 'extended break cap'
   }
