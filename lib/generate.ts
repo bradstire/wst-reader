@@ -5,6 +5,7 @@ import { applyBreaks } from './withBreaks';
 import { headerize, timestampedName } from './postprocess';
 import { getConfig } from './config';
 import { sanitizeForOutput } from './sanitize';
+import { drawSpread, drawClarifiers } from './spread';
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -28,31 +29,89 @@ export async function generateFullReading(sign: string) {
     const cfg = getConfig();
     cfg.sign = sign; // Override with provided sign
     
+    // 0) Draw unique 5-card spread (cards can only appear once, regardless of orientation)
+    const spread = drawSpread(cfg.reversal_ratio);
+    const [c1, c2, c3, c4, c5] = spread;
+    
+    // Draw clarifiers (max 2, also unique)
+    const usedCards = new Set(spread.map(card => card.replace(/, reversed$/i, '').trim()));
+    const clarifierCards = drawClarifiers(usedCards, 2);
+    const clarifiers = clarifierCards.length > 0 ? clarifierCards.join(' | ') : 'none';
+    
+    console.log(`[spread] Locked spread: ${spread.join(' | ')}`);
+    console.log(`[spread] Clarifiers: ${clarifiers}`);
+    
     // 1) Generate chapters (sequential to respect "locked spread" semantics)
     console.log('[generate] Generating CH01...');
     const ch1Prompt = TPL_01
       .replaceAll('{sign}', sign)
-      .replaceAll('{date_anchor}', cfg.date_anchor);
+      .replaceAll('{date_anchor}', cfg.date_anchor)
+      .replaceAll('{c1}', c1)
+      .replaceAll('{c2}', c2)
+      .replaceAll('{c3}', c3)
+      .replaceAll('{c4}', c4)
+      .replaceAll('{c5}', c5)
+      .replaceAll('{clarifiers}', clarifiers)
+      .replaceAll('{card1_line}', c1);
     const ch1 = await genChapter(ch1Prompt, cfg.openai_model);
     
     console.log('[generate] Generating CH02...');
-    const ch2Prompt = TPL_02.replaceAll('{sign}', sign);
+    const ch2Prompt = TPL_02
+      .replaceAll('{sign}', sign)
+      .replaceAll('{c1}', c1)
+      .replaceAll('{c2}', c2)
+      .replaceAll('{c3}', c3)
+      .replaceAll('{c4}', c4)
+      .replaceAll('{c5}', c5)
+      .replaceAll('{clarifiers}', clarifiers)
+      .replaceAll('{card2_line}', c2);
     const ch2 = await genChapter(ch2Prompt, cfg.openai_model);
     
     console.log('[generate] Generating CH03...');
-    const ch3Prompt = TPL_03.replaceAll('{sign}', sign);
+    const ch3Prompt = TPL_03
+      .replaceAll('{sign}', sign)
+      .replaceAll('{c1}', c1)
+      .replaceAll('{c2}', c2)
+      .replaceAll('{c3}', c3)
+      .replaceAll('{c4}', c4)
+      .replaceAll('{c5}', c5)
+      .replaceAll('{clarifiers}', clarifiers)
+      .replaceAll('{card3_line}', c3);
     const ch3 = await genChapter(ch3Prompt, cfg.openai_model);
     
     console.log('[generate] Generating CH04...');
-    const ch4Prompt = TPL_04.replaceAll('{sign}', sign);
+    const ch4Prompt = TPL_04
+      .replaceAll('{sign}', sign)
+      .replaceAll('{c1}', c1)
+      .replaceAll('{c2}', c2)
+      .replaceAll('{c3}', c3)
+      .replaceAll('{c4}', c4)
+      .replaceAll('{c5}', c5)
+      .replaceAll('{clarifiers}', clarifiers)
+      .replaceAll('{card4_line}', c4);
     const ch4 = await genChapter(ch4Prompt, cfg.openai_model);
     
     console.log('[generate] Generating CH05...');
-    const ch5Prompt = TPL_05.replaceAll('{sign}', sign);
+    const ch5Prompt = TPL_05
+      .replaceAll('{sign}', sign)
+      .replaceAll('{c1}', c1)
+      .replaceAll('{c2}', c2)
+      .replaceAll('{c3}', c3)
+      .replaceAll('{c4}', c4)
+      .replaceAll('{c5}', c5)
+      .replaceAll('{clarifiers}', clarifiers)
+      .replaceAll('{card5_line}', c5);
     const ch5 = await genChapter(ch5Prompt, cfg.openai_model);
     
     console.log('[generate] Generating CH06 (finale)...');
-    const ch6Prompt = TPL_06.replaceAll('{sign}', sign);
+    const ch6Prompt = TPL_06
+      .replaceAll('{sign}', sign)
+      .replaceAll('{c1}', c1)
+      .replaceAll('{c2}', c2)
+      .replaceAll('{c3}', c3)
+      .replaceAll('{c4}', c4)
+      .replaceAll('{c5}', c5)
+      .replaceAll('{clarifiers}', clarifiers);
     const ch6 = await genChapter(ch6Prompt, cfg.openai_model);
 
     // 2) Stitch
