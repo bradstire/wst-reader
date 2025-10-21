@@ -203,7 +203,7 @@ End as if pausing mid-session for a breath, not concluding a chapter.
 The reader should feel like you're processing before moving to the next card, not wrapping up.
 
 SPONTANEOUS PAUSE OPTIONS (use freely, no quotas):
-• Abrupt pause: "Anyway." / "Yeah." / "Hm." / "Okay." / "Alright." / "So."
+• Abrupt pause: "Yeah." / "Hm." / "Okay." / "Alright." / "So." / "Mm."
 • Momentum hold: "But." / "And." / "Still." (trails off mid-thought)
 • Discovery pause: "Wait, I'm seeing something else." / "Hold on." / "Hm, okay."
 • Energy shift: "This is shifting now." / "Okay, moving on." / "Yeah, so."
@@ -211,7 +211,8 @@ SPONTANEOUS PAUSE OPTIONS (use freely, no quotas):
 • Direct address: "You get it." / "You knew that already." / "Right?"
 • Emotional exhale: "Sheesh." / "Whoa." / "Okay then."
 
-AVOID (breaks live flow):
+HARD BAN (v5.1.5):
+- "Anyway." (overused, redundant)
 - Summary language: "So to sum up," "The main point is," "Ultimately"
 - Conclusive tone: "In the end," "That's the lesson," "Now you know"
 - Forward promises: "We'll see," "Next up," "Coming up," "More on this later"
