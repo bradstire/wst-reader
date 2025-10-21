@@ -89,21 +89,21 @@ export default function Home() {
     return () => clearInterval(progressInterval);
   }, [isGenerating]);
 
-  // Scroll-based card detection (starts after first card appears)
+  // Scroll-based card detection (always listen, but only detect after activated)
   useEffect(() => {
     const outputDiv = document.getElementById('output');
-    if (!outputDiv || !currentCard) return; // Only start after first card appears
-
-    // Activate scroll detection
-    scrollDetectionActive.current = true;
+    if (!outputDiv || !output) return; // Only attach if there's output
 
     const handleScroll = () => {
-      detectCardInView();
+      // Only detect if scroll detection is active (activated after first card appears)
+      if (scrollDetectionActive.current) {
+        detectCardInView();
+      }
     };
 
     outputDiv.addEventListener('scroll', handleScroll);
     return () => outputDiv.removeEventListener('scroll', handleScroll);
-  }, [output, currentCard]);
+  }, [output]);
 
   // Dynamic scrollbar based on visible content only
   useEffect(() => {
