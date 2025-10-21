@@ -163,8 +163,10 @@ export function applyBreaks(stitched: string): string {
       if (i < sentences.length - 1) {
         const nextSentence = sentences[i + 1];
         
-        // Check if the NEXT sentence is a card reveal (card name at the start)
-        const isNextSentenceCardReveal = /^(?:The\s+)?(?:Fool|Magician|High\s+Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel\s+of\s+Fortune|Justice|Hanged\s+Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judgement|World|Ace|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Page|Knight|Queen|King)\s+of\s+(?:Wands|Cups|Swords|Pentacles)|^(?:The\s+)?(?:Fool|Magician|High\s+Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel\s+of\s+Fortune|Justice|Hanged\s+Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judgement|World)(?:,|\.)/.test(nextSentence);
+        // Check if the NEXT sentence is a standalone card reveal
+        // Pattern: Card name, optional comma/period, optional reaction (Oh wow, Huh??, etc.), then end
+        const cardRevealPattern = /^(?:The\s+)?(?:Fool|Magician|High\s+Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel\s+of\s+Fortune|Justice|Hanged\s+Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judgement|World|Ace|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Page|Knight|Queen|King)(?:\s+of\s+(?:Wands|Cups|Swords|Pentacles))?(?:,\s*reversed)?[.,]\s*(?:(?:Oh\s+(?:my\s+)?god|Huh\?\?|Hmm?|Whoa|Sheesh|Oh\s+wow)[.!?]?)?\s*$/i;
+        const isNextSentenceCardReveal = cardRevealPattern.test(nextSentence.trim());
         
         // If next sentence is a card reveal, add a pause for card sound FX (3-5s)
         if (isNextSentenceCardReveal) {
