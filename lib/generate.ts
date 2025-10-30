@@ -6,6 +6,7 @@ import { headerize, timestampedName } from './postprocess';
 import { getConfig } from './config';
 import { sanitizeForOutput } from './sanitize';
 import { drawSpread, drawClarifiers } from './spread';
+import { redactUnrevealedCards } from './validator';
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -54,7 +55,14 @@ export async function generateFullReading(sign: string) {
       .replaceAll('{c5}', '???') // Future cards hidden
       .replaceAll('{clarifiers}', clarifiers) // CH01 gets clarifiers (revealed with Card 1)
       .replaceAll('{card1_line}', c1);
-    const ch1 = await genChapter(ch1Prompt, cfg.openai_model);
+    let ch1 = await genChapter(ch1Prompt, cfg.openai_model);
+    // Enforce linear narrative: only Card 01 allowed before any other reveals
+    ({ text: ch1 } = redactUnrevealedCards(
+      ch1,
+      [c1, c2, c3, c4, c5],
+      [c1],
+      clarifierCards
+    ));
     
     console.log('[generate] Generating CH02...');
     const ch2Prompt = TPL_02
@@ -66,7 +74,13 @@ export async function generateFullReading(sign: string) {
       .replaceAll('{c5}', '???') // Future cards hidden
       .replaceAll('{clarifiers}', clarifiers) // CH02 gets clarifiers (already revealed)
       .replaceAll('{card2_line}', c2);
-    const ch2 = await genChapter(ch2Prompt, cfg.openai_model);
+    let ch2 = await genChapter(ch2Prompt, cfg.openai_model);
+    ({ text: ch2 } = redactUnrevealedCards(
+      ch2,
+      [c1, c2, c3, c4, c5],
+      [c1, c2],
+      clarifierCards
+    ));
     
     console.log('[generate] Generating CH03...');
     const ch3Prompt = TPL_03
@@ -78,7 +92,13 @@ export async function generateFullReading(sign: string) {
       .replaceAll('{c5}', '???') // Future cards hidden
       .replaceAll('{clarifiers}', clarifiers) // CH03 gets clarifiers (already revealed)
       .replaceAll('{card3_line}', c3);
-    const ch3 = await genChapter(ch3Prompt, cfg.openai_model);
+    let ch3 = await genChapter(ch3Prompt, cfg.openai_model);
+    ({ text: ch3 } = redactUnrevealedCards(
+      ch3,
+      [c1, c2, c3, c4, c5],
+      [c1, c2, c3],
+      clarifierCards
+    ));
     
     console.log('[generate] Generating CH04...');
     const ch4Prompt = TPL_04
@@ -90,7 +110,13 @@ export async function generateFullReading(sign: string) {
       .replaceAll('{c5}', '???') // Future cards hidden
       .replaceAll('{clarifiers}', clarifiers) // CH04 gets clarifiers (already revealed)
       .replaceAll('{card4_line}', c4);
-    const ch4 = await genChapter(ch4Prompt, cfg.openai_model);
+    let ch4 = await genChapter(ch4Prompt, cfg.openai_model);
+    ({ text: ch4 } = redactUnrevealedCards(
+      ch4,
+      [c1, c2, c3, c4, c5],
+      [c1, c2, c3, c4],
+      clarifierCards
+    ));
     
     console.log('[generate] Generating CH05...');
     const ch5Prompt = TPL_05
@@ -102,7 +128,13 @@ export async function generateFullReading(sign: string) {
       .replaceAll('{c5}', c5)
       .replaceAll('{clarifiers}', clarifiers) // CH05 gets clarifiers (already revealed)
       .replaceAll('{card5_line}', c5);
-    const ch5 = await genChapter(ch5Prompt, cfg.openai_model);
+    let ch5 = await genChapter(ch5Prompt, cfg.openai_model);
+    ({ text: ch5 } = redactUnrevealedCards(
+      ch5,
+      [c1, c2, c3, c4, c5],
+      [c1, c2, c3, c4, c5],
+      clarifierCards
+    ));
     
     console.log('[generate] Generating CH06 (finale)...');
     const ch6Prompt = TPL_06
@@ -113,7 +145,13 @@ export async function generateFullReading(sign: string) {
       .replaceAll('{c4}', c4)
       .replaceAll('{c5}', c5)
       .replaceAll('{clarifiers}', clarifiers); // CH06 gets clarifiers (all revealed)
-    const ch6 = await genChapter(ch6Prompt, cfg.openai_model);
+    let ch6 = await genChapter(ch6Prompt, cfg.openai_model);
+    ({ text: ch6 } = redactUnrevealedCards(
+      ch6,
+      [c1, c2, c3, c4, c5],
+      [c1, c2, c3, c4, c5],
+      clarifierCards
+    ));
 
     // 2) Stitch
     console.log('[generate] Stitching chapters...');

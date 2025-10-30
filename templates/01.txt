@@ -201,6 +201,10 @@ Direct-pressure lines are encouraged ("You knew before you said it." / "Don't li
   ❌ Examples of violations: "The Eight of Wands energy is hovering" / "Six of Pentacles later" / "Two of Cups after that"
   ✅ ALLOWED: Discuss {c1} and clarifiers ({clarifiers}) freely.
   The reader does NOT know what cards are coming next. Do not spoil future reveals.
+• Clarifiers reveal protocol: If you name clarifiers, first print a standalone line exactly:
+  "Clarifiers: {clarifiers}."
+  Before that line, do NOT print any clarifier names; if needed, say "the clarifiers" generically.
+• Generic reference rule: If you feel compelled to allude to unrevealed energy, use "this energy" / "this card" instead of any card name.
 • Ban ESSAY scaffolds (structured, pre-written feeling):
   - "Picture this," / "Imagine this," / "Let's say that..."
   - "In other words," / "To put it simply," / "What I mean is..." / "Essentially,"
