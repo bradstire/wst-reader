@@ -84,11 +84,19 @@ export function redactUnrevealedCards(
 
   let finalText = lines.join('\n');
   
-  // 3) Clean up awkward article placement after redaction
-  // Fix "the this energy" / "this this energy" / "with the this energy" / "this energy reversed" patterns
+  // 3) Replace all "this energy" placeholders with contextual alternatives
+  const contextualReplacements = [
+    { pattern: /\bthis energy\s+energy\b/gi, replacement: 'this energy' },
+    { pattern: /\bthat this energy\s+energy\b/gi, replacement: 'that influence' },
+    { pattern: /\bthis energy\s+(reversed|lurking|sitting|hovering|underneath|beneath|feeding|anchoring)\b/gi, replacement: 'this energy' },
+    { pattern: /\b(the|this|with the|and the|what's feeding into this is that)\s+this energy\b/gi, replacement: 'this energy' },
+  ];
+  
   const beforeCleanup = finalText;
-  finalText = finalText.replace(/\b(the|this|with the|and the)\s+this energy\b/gi, 'this energy');
-  finalText = finalText.replace(/\bthis energy\s+(reversed|lurking|sitting|hovering|underneath|beneath|feeding|anchoring)\b/gi, 'this energy');
+  for (const { pattern, replacement } of contextualReplacements) {
+    finalText = finalText.replace(pattern, replacement);
+  }
+  
   if (finalText !== beforeCleanup) {
     changed = true;
   }
