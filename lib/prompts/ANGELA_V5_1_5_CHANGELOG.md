@@ -263,3 +263,4 @@ If you're running v5.1.4:
 **Optimized For**: gpt-4o-mini  
 **Key Fix**: Transition variety, placement, and frequency control
 
+

@@ -317,3 +317,4 @@ The script will generate a timestamp log for reference:
 **Status**: Folder ready, awaiting audio files  
 **Location**: `/Users/bradstire/wst-reader/assets/card-sounds/`
 
+

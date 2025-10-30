@@ -224,3 +224,4 @@ This update is optimized for **gpt-4o-mini** and focuses on:
 
 The goal is to make Angela sound like a TikTok/YouTube tarot reader you'd actually watch—someone who catches you up on the drama with intuitive authority, gentle humor, and grounded realness.
 
+

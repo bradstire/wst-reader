@@ -222,3 +222,4 @@ For a typical ~3,500-4,200 word reading:
 **Target Duration**: 15 minutes  
 **Key Features**: Pre-realization pauses, pre-card-reveal pauses, first-time tracking
 
+

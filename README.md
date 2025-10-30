@@ -38,3 +38,19 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+
+---
+
+### Red Rocks AI Map (prototype)
+
+New route: `/red-rocks`
+
+Assets expected under `public/`:
+- `redrocksmap_.png` — base map (centered).
+- `pin.png` — reusable pointer icon.
+- `Master Geometry Reference.jpg` — temporary image for all pins.
+
+Interactions:
+- Hover a pin to see a floating card styled with a white border.
+- Click a pin to open a modal with the image. Note shows: "Click to zoom 20%. Click and drag to move." Scroll wheel also zooms.
+- Close the modal via the `×` button or by clicking outside the frame.

@@ -283,3 +283,4 @@ Before finalizing, check:
 **Compatibility**: Optimized for gpt-4o-mini  
 **Target Feel**: TikTok/YouTube tarot reader—spontaneous, behavioral, conversational
 
+
