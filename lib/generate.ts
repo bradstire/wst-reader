@@ -42,16 +42,17 @@ export async function generateFullReading(sign: string) {
     console.log(`[spread] Clarifiers: ${clarifiers}`);
     
     // 1) Generate chapters (sequential to respect "locked spread" semantics)
+    // CRITICAL: Implement linear narrative - each chapter only knows cards revealed so far
     console.log('[generate] Generating CH01...');
     const ch1Prompt = TPL_01
       .replaceAll('{sign}', sign)
       .replaceAll('{date_anchor}', cfg.date_anchor)
       .replaceAll('{c1}', c1)
-      .replaceAll('{c2}', c2)
-      .replaceAll('{c3}', c3)
-      .replaceAll('{c4}', c4)
-      .replaceAll('{c5}', c5)
-      .replaceAll('{clarifiers}', clarifiers)
+      .replaceAll('{c2}', '???') // Future cards hidden
+      .replaceAll('{c3}', '???') // Future cards hidden
+      .replaceAll('{c4}', '???') // Future cards hidden
+      .replaceAll('{c5}', '???') // Future cards hidden
+      .replaceAll('{clarifiers}', clarifiers) // CH01 gets clarifiers (revealed with Card 1)
       .replaceAll('{card1_line}', c1);
     const ch1 = await genChapter(ch1Prompt, cfg.openai_model);
     
@@ -60,10 +61,10 @@ export async function generateFullReading(sign: string) {
       .replaceAll('{sign}', sign)
       .replaceAll('{c1}', c1)
       .replaceAll('{c2}', c2)
-      .replaceAll('{c3}', c3)
-      .replaceAll('{c4}', c4)
-      .replaceAll('{c5}', c5)
-      .replaceAll('{clarifiers}', clarifiers)
+      .replaceAll('{c3}', '???') // Future cards hidden
+      .replaceAll('{c4}', '???') // Future cards hidden
+      .replaceAll('{c5}', '???') // Future cards hidden
+      .replaceAll('{clarifiers}', clarifiers) // CH02 gets clarifiers (already revealed)
       .replaceAll('{card2_line}', c2);
     const ch2 = await genChapter(ch2Prompt, cfg.openai_model);
     
@@ -73,9 +74,9 @@ export async function generateFullReading(sign: string) {
       .replaceAll('{c1}', c1)
       .replaceAll('{c2}', c2)
       .replaceAll('{c3}', c3)
-      .replaceAll('{c4}', c4)
-      .replaceAll('{c5}', c5)
-      .replaceAll('{clarifiers}', clarifiers)
+      .replaceAll('{c4}', '???') // Future cards hidden
+      .replaceAll('{c5}', '???') // Future cards hidden
+      .replaceAll('{clarifiers}', clarifiers) // CH03 gets clarifiers (already revealed)
       .replaceAll('{card3_line}', c3);
     const ch3 = await genChapter(ch3Prompt, cfg.openai_model);
     
@@ -86,8 +87,8 @@ export async function generateFullReading(sign: string) {
       .replaceAll('{c2}', c2)
       .replaceAll('{c3}', c3)
       .replaceAll('{c4}', c4)
-      .replaceAll('{c5}', c5)
-      .replaceAll('{clarifiers}', clarifiers)
+      .replaceAll('{c5}', '???') // Future cards hidden
+      .replaceAll('{clarifiers}', clarifiers) // CH04 gets clarifiers (already revealed)
       .replaceAll('{card4_line}', c4);
     const ch4 = await genChapter(ch4Prompt, cfg.openai_model);
     
@@ -99,7 +100,7 @@ export async function generateFullReading(sign: string) {
       .replaceAll('{c3}', c3)
       .replaceAll('{c4}', c4)
       .replaceAll('{c5}', c5)
-      .replaceAll('{clarifiers}', clarifiers)
+      .replaceAll('{clarifiers}', clarifiers) // CH05 gets clarifiers (already revealed)
       .replaceAll('{card5_line}', c5);
     const ch5 = await genChapter(ch5Prompt, cfg.openai_model);
     
@@ -111,7 +112,7 @@ export async function generateFullReading(sign: string) {
       .replaceAll('{c3}', c3)
       .replaceAll('{c4}', c4)
       .replaceAll('{c5}', c5)
-      .replaceAll('{clarifiers}', clarifiers);
+      .replaceAll('{clarifiers}', clarifiers); // CH06 gets clarifiers (all revealed)
     const ch6 = await genChapter(ch6Prompt, cfg.openai_model);
 
     // 2) Stitch

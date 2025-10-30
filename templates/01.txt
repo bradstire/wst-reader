@@ -1,4 +1,4 @@
-[STATE: Cards locked = (1) {c1}, (2) {c2}, (3) {c3}, (4) {c4}, (5) {c5}. Clarifiers = {clarifiers}]
+[STATE: Cards locked = (1) {c1}, (2) ???, (3) ???, (4) ???, (5) ???. Clarifiers = {clarifiers}]
 [LEN: target 475–580]
 [DO NOT PRINT — GLOBAL]
 Metaphors: obey v3.3 (final, per-chapter). Hard cap = 2. None in the opening paragraph. No back-to-back.

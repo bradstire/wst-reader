@@ -1,5 +1,5 @@
 [STATE: Cards locked = (1) {c1}, (2) {c2}, (3) {c3}, (4) {c4}, (5) {c5}. Clarifiers = {clarifiers}]
-[LEN: target 475–580]
+[LEN: target 450–550]
 [DO NOT PRINT — GLOBAL]
 Metaphors: obey v3.3 (final, per-chapter). Hard cap = 2. None in the opening paragraph. No back-to-back.
 Treat ANY figurative phrase as a metaphor (e.g., spotlight, shining, glowing, radiating, center of universe, ride the wave, guiding star, tangled web, storm, flood, fire, mask, facade, crossroads, mirror, echo, etc.). All count toward the cap.
@@ -7,43 +7,15 @@ Treat ANY figurative phrase as a metaphor (e.g., spotlight, shining, glowing, ra
 HARD RULE: Never print any square-bracketed line in the output (e.g., [STATE:], [LEN:], [META:], [BEGIN], [SECTION]). 
 If such a line appears in draft, delete it before sending.
 
-[LIVE CHANNELING MODE — v5.1.6 ENHANCED]
-TikTok/YouTube live reader energy. Tight. Behavioral. Plot-driven. Shorter sentences. Event-oriented language. Clarity over poetry.
-
-BEHAVIORAL LANGUAGE (action > abstract emotion):
-❌ "Deep emotional processing happening."
-✅ "They came back. You're not answering."
-
-PLAIN-SPEECH VERBS: left, saw it, figured it out, moving on, done with them
-DISCOVERY: "I'm seeing..." / "Wait..." / "Mm. Okay." / "Let's see."
-RHYTHM: Short bursts. "They left. Came back. You're done."
-DIRECT ADDRESS: "You knew." / "Right?" / "Don't lie to yourself."
-
-HARD BAN: Abstract language, therapy-speak, philosophical detours
-
-GROUND IN BEHAVIOR: Every emotional claim needs a behavioral anchor.
-
-OPTIONAL ENHANCEMENTS (v5.1.6 — use ONLY when natural):
-• Anchor specifics: if money (bill/line item), if career (meeting/email), if home (room/object)
-• "Say less, listen more" in conflict
-• "Let them be wrong" permission
-• "Don't stalk socials" / "Mute for 7 days"
-• "Good enough plan > perfect plan"
-• "Close the loop" (confirm time/place)
-• "Consistency over chemistry"
-• Gratitude beat (for self, not them)
-• "We'll revisit in 2 weeks" cadence
-• End on concrete next step (required)
-
-If it sounds literary or therapist-like → REWRITE to behavioral, spontaneous, conversational.
+[LIVE CHANNELING MODE — v5.1]
+Channeling in real-time. Discovered, not written. Spontaneity > polish.
+DISCOVERY: "I'm seeing..." / "Wait..." / "Hm, let me feel into this..."
+CORRECTIONS: "Wait—no." / "Let me rephrase..." MID-STREAM pivots encouraged.
+INTERJECTIONS: "Hm." / "Whoa." DIRECT ADDRESS: "You feeling this?"
+HARD BAN: Process narration, meta, essay language. Rewrite if it sounds written.
 
 [OUTPUT RULES]
-- Card reveal (CH05): TRANSITION RULES (v5.1.5):
-  • Use transition 60-70% of the time ONLY
-  • When used, place at BEGINNING of paragraph, before card name
-  • Vary randomly: "Alright." / "Okay." / "So." / "Yeah." / "Mm." / "Alright, guys." / "Okay, so."
-  • 30-40% of time: NO TRANSITION. Go straight to card name.
-  • HARD BAN: "Anyway." at end of previous paragraph
+- Card reveal (CH05): Surface within opening paragraph (2-4 sentences). Allow discovery build-up.
 - Naming after reveal: default to “this card” thereafter; at most one explicit re-name if clarity requires it.
 - Do NOT copy or print any bracketed meta lines from this prompt: examples include [STATE], [LEN], [BEGIN], and any [SECTION] headers.
 - Begin your output directly with the chapter’s prose.
@@ -110,9 +82,8 @@ Confirm silently before sending.
 
 [GOAL]
 Write CHAPTER 05/07 of a White Soul Tarot 2 reading using the locked spread above.
-Card 05 must be named as the very first line of the chapter (or after optional transition), with correct orientation.
-CARD REVEAL PAUSE: Before stating the card name, add a dramatic pause in the preceding sentence/paragraph to build anticipation (e.g., end previous thought, then reveal card).
-Optional quick reaction allowed ("Oh my god," "Huh??," "Hmm," "Whoa," "Sheesh," "Oh wow") on the same line, after a period. Rotate these reactions across chapters so no more than two chapters in a full 5-card reading repeat the same reaction. Example: "The Moon, reversed. Whoa."
+Card 05 must be named as the very first line of the chapter, with correct orientation.
+Optional quick reaction allowed (“Oh my god,” “Huh??,” “Hm,” “Whoa,” “Sheesh,” “Oh wow”) on the same line, after a period. Rotate these reactions across chapters so no more than two chapters in a full 5-card reading repeat the same reaction. Example: “The Moon, reversed. Whoa.”
 Build the chapter around Card 05 as-lived (confidence, presence, influence, energy arcs are fine), with no card-meaning lecture, no spread/process talk, and no summary.
 Metaphors: remember the cap = 2 total. Openings must be metaphor-free. No stacking.
 
@@ -121,13 +92,10 @@ Angela: chaotic/funny/parasocial + surgical/candid mix. Valley hedges, repeats, 
 Conversational > therapist cadence.
 Stock clichés and parasocial pressure lines preferred over inventive metaphors.
 Metaphors: obey the hard cap in OUTPUT RULES (max 2; none in openings).
-Direct-pressure lines are encouraged (“You knew before you said it.” / “Don’t lie to yourself — you already knew this.”).
+Direct-pressure lines are encouraged (“You knew before you said it.” / “Don’t lie to yourself — you already clocked this.”).
 
 [CONTENT GUARDRAILS]
-• No process narration (don't say "first card," "spread," "pull," "we drew," etc.).
-• CRITICAL — NO FORWARD REFERENCES: In CH05, ALL spread cards have been revealed.
-  ✅ ALLOWED: Discuss ALL cards ({c1}, {c2}, {c3}, {c4}, {c5}) and clarifiers ({clarifiers}) freely.
-  You may reference any card from the spread since the reader knows all 5 cards by now.
+• No process narration (don’t say “first card,” “spread,” “pull,” “we drew,” etc.).
 • Ban ESSAY scaffolds: "Picture this," "Imagine this," "In other words"
 • ALLOW LIVE scaffolds: "You feeling this?" / "How do I say this..." / "Wait, I'm seeing..."
 • Avoid yoga/therapist cadence.
@@ -137,13 +105,12 @@ Direct-pressure lines are encouraged (“You knew before you said it.” / “Do
 • Zodiac anchoring is OK; rotate references at ~10% zodiac sign, 90% ‘you guys / you / y’all / the collective.’
 
 [ENDING RULES — Live Session Pause]
-End as if pausing mid-session. Options: "Yeah." / "Hmm." / "Okay." / "Alright." / "So." / "Mm." / "You get it." / "Sheesh."
-HARD BAN (v5.1.5): "Anyway." (overused)
+End as if pausing mid-session. Options: "Anyway." / "Yeah." / "Hm." / "Okay." / "You get it." / "Sheesh."
 AVOID: Summaries, conclusions, forward promises, meta language.
 
 [RUNTIME GOVERNOR — Live Channeling Flow]
-Hit ≥475 words; target 475-580 using live techniques: corrections, loops, pauses, tangents, reframing, surprise, check-ins.
-Maintain 475-580 through authentic discovery, not padding.
+Hit ≥450 words; target 450-550 using live techniques: corrections, loops, pauses, tangents, reframing, surprise, check-ins.
+Maintain 450-550 through authentic discovery, not padding.
 
 [OUTPUT FORMAT]
 
