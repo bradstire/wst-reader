@@ -90,12 +90,25 @@ export function redactUnrevealedCards(
     { pattern: /\bthat this energy\s+energy\b/gi, replacement: 'that influence' },
     { pattern: /\bthis energy\s+(reversed|lurking|sitting|hovering|underneath|beneath|feeding|anchoring)\b/gi, replacement: 'this energy' },
     { pattern: /\b(the|this|with the|and the|what's feeding into this is that)\s+this energy\b/gi, replacement: 'this energy' },
+    // Replace standalone "this energy" in common phrases
+    { pattern: /this energy is whispering/gi, replacement: 'there\'s a whisper' },
+    { pattern: /And then there's this energy\./gi, replacement: 'And then there\'s this undercurrent.' },
+    { pattern: /The supporting energy underneath is this energy\./gi, replacement: 'There\'s something underlying this.' },
+    { pattern: /\bthis energy\s+(is|was|were|has|have)\s+/gi, replacement: 'there ' },
+    { pattern: /\bthis energy\s+(shows|suggests|points|tells|means)\s+/gi, replacement: 'this ' },
+    { pattern: /\band this energy\b/gi, replacement: 'and this undercurrent' },
+    { pattern: /\bor this energy\b/gi, replacement: 'or this current' },
+    { pattern: /\bbut this energy\b/gi, replacement: 'but this vibe' },
+    { pattern: /\bis this energy\b/gi, replacement: 'is this current' },
   ];
   
   const beforeCleanup = finalText;
   for (const { pattern, replacement } of contextualReplacements) {
     finalText = finalText.replace(pattern, replacement);
   }
+  
+  // 4) Capitalize Spirit consistently
+  finalText = finalText.replace(/\bspirit\b/g, 'Spirit');
   
   if (finalText !== beforeCleanup) {
     changed = true;
