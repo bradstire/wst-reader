@@ -82,7 +82,15 @@ export function redactUnrevealedCards(
     }
   }
 
-  const finalText = lines.join('\n');
+  let finalText = lines.join('\n');
+  
+  // 3) Clean up awkward article placement after redaction
+  // Fix "the this energy" / "this this energy" / "with the this energy" patterns
+  finalText = finalText.replace(/\b(the|this|with the|and the)\s+this energy\b/gi, 'this energy');
+  if (finalText !== lines.join('\n')) {
+    changed = true;
+  }
+  
   return { text: finalText, changed };
 }
 

@@ -1,0 +1,64 @@
+
+> wst-reader@0.1.0 dev
+> next dev
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/bradstire/package-lock.json as the root directory.
+ To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+ Detected additional lockfiles: 
+   * /Users/bradstire/wst-reader/package-lock.json
+
+   ▲ Next.js 15.5.4
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.1.157:3001
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1261ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ○ Compiling / ...
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled / in 1033ms (292 modules)
+ GET / 200 in 426ms
+ ✓ Compiled /api/ping in 80ms (134 modules)
+ GET /api/ping 200 in 2114ms
+ GET / 200 in 278ms
+ ✓ Compiled /api/generate in 119ms (148 modules)
+[generate] Starting generation for sign: Gemini
+[generate] Starting full reading generation for Gemini
+[spread-lock] Page of Wands | Four of Cups, reversed | Ace of Wands, reversed | Strength | The Sun, reversed
+[spread] Locked spread: Page of Wands | Four of Cups, reversed | Ace of Wands, reversed | Strength | The Sun, reversed
+[spread] Clarifiers: Two of Swords, reversed | Nine of Wands
+[generate] Generating CH01...
+[generate] Generating CH02...
+[generate] Generating CH03...
+[generate] Generating CH04...
+[generate] Generating CH05...
+[generate] Generating CH06 (finale)...
+[generate] Stitching chapters...
+[generate] Sanitizing content...
+[generate] Adding header...
+[generate] Saving stitched file...
+[storage] Using local filesystem fallback for FULL_READING__Gemini__2025-10-30T21-40-02Z.txt
+[generate] Applying break tags...
+[storage] Using local filesystem fallback for FULL_READING_with_breaks__Gemini__2025-10-30T21-40-02Z.txt
+[generate] Cleaning up old files...
+[storage] Blob storage not configured, skipping cleanup
+[storage] Blob storage not configured, skipping cleanup
+[generate] Generation complete: FULL_READING__Gemini__2025-10-30T21-40-02Z.txt, FULL_READING_with_breaks__Gemini__2025-10-30T21-40-02Z.txt
+ POST /api/generate?sign=Gemini 200 in 61493ms
+ ✓ Compiled /api/reading-stream in 116ms (321 modules)
+[reading-stream] PUBLIC ACCESS TEST - Fetching latest reading for sign: Gemini
+[reading-stream] Found latest file: FULL_READING__Gemini__2025-10-30T21-40-02Z.txt
+ GET /api/reading-stream?sign=Gemini 200 in 125ms
+ ✓ Compiled /api/download in 39ms (142 modules)
+[download] Fetching plain file for sign: Gemini
+[download] Found file: FULL_READING__Gemini__2025-10-30T21-40-02Z.txt
+ GET /api/download?kind=plain&sign=Gemini 200 in 59ms
+[download] Fetching breaks file for sign: Gemini
+[download] Found file: FULL_READING_with_breaks__Gemini__2025-10-30T21-40-02Z.txt
+ GET /api/download?kind=breaks&sign=Gemini 200 in 5ms
+ ✓ Compiled in 114ms (181 modules)
+ ✓ Compiled in 39ms (181 modules)
+ ✓ Compiled in 47ms (181 modules)
