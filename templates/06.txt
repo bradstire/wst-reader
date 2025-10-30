@@ -111,7 +111,7 @@ Direct-pressure lines are encouraged ("You knew before you said it." / "Don't li
 [CONTENT GUARDRAILS]
 • No process narration (don't say "first card," "spread," "pull," "we drew," etc.).
 • CRITICAL — NO FORWARD REFERENCES: In CH06 (finale), ALL spread cards have been revealed.
-  ✅ ALLOWED: Discuss ALL cards ({c1}, {c2}, {c3}, {c4}, {c5}) and clarifiers ({clarifiers}) freely.
+  ✅ ALLOWED: Discuss ALL cards ({c1}, {c2}, {c3}, {c4}, {c5}) and supporting energies ({clarifiers}) freely.
   This is the closing chapter - weave the full spread narrative together to create cohesion.
 • Ban ESSAY scaffolds: "Picture this," "Imagine this," "In other words"
 • ALLOW LIVE scaffolds: "You feeling this?" / "How do I say this..." / "Wait, I'm seeing..."
@@ -124,10 +124,8 @@ Direct-pressure lines are encouraged ("You knew before you said it." / "Don't li
 
 [CH06 ENDING — Live Session Close with CTA]
 Wind down naturally, THEN drop CTA as an afterthought.
-CTA (required): "Like + Subscribe" (~90%) / "Tell your group chat" (~80%)
-✅ "Anyway. If this resonated, Like + Subscribe. Tell your group chat."
-✅ "Hmm. Okay. Real quick—Like + Subscribe if you want more. Share it."
-❌ "As we conclude, please Like + Subscribe." (too formal)
+CTA (required, locked studio outro):
+"Okay... that's all I've got for now! If this hit!... You already know what to do! Please like, subscribe, tell your group chat! I'll see y'all soon."
 BEFORE CTA: Wind down naturally, no summary, no meta about "ending."
 
 [RUNTIME GOVERNOR — Live Channeling Flow]

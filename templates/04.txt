@@ -127,10 +127,12 @@ Direct-pressure lines are encouraged (“You knew before you said it.” / “Do
 • CRITICAL — NO FORWARD REFERENCES: In CH04, you may discuss Cards 01-04 ({c1}, {c2}, {c3}, {c4}) ONLY.
   ❌ FORBIDDEN: Do NOT mention, hint at, or reference {c5} in ANY way.
   ❌ Examples of violations: "The Star later" / "Nine of Wands energy is hovering"
-  ✅ ALLOWED: Discuss {c1}, {c2}, {c3}, {c4}, and clarifiers ({clarifiers}) freely.
+  ✅ ALLOWED: Discuss {c1}, {c2}, {c3}, {c4}, and supporting energies ({clarifiers}) freely.
   The reader does NOT know what the final card is. Do not spoil it.
-• Clarifiers reveal protocol: If you name clarifiers, first print a standalone line exactly:
-  "Clarifiers: {clarifiers}." Do not print any clarifier names before that line; say "the clarifiers" instead.
+• Supporting energies (formerly "clarifiers") protocol: DO NOT use the word "clarifiers" anywhere. If you reference these energies:
+  - Rotate phrasing to avoid repetition: "supporting energies," "under the surface," "beneath this," "hidden underneath," "what's feeding into this," "the influence that anchors it," "the current underneath," "the companion force"
+  - DO NOT print "Clarifiers: {clarifiers}" as a standalone line (this is removed in post-processing)
+  - DO NOT use the word "clarifiers" at any point
 • Generic reference rule: If you must allude to unrevealed energy, use "this energy" / "this card" — never a card name.
 • Ban ESSAY scaffolds: "Picture this," "Imagine this," "In other words"
 • ALLOW LIVE scaffolds: "You feeling this?" / "How do I say this..." / "Wait, I'm seeing..."
