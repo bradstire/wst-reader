@@ -110,6 +110,66 @@ export function redactUnrevealedCards(
   // 4) Capitalize Spirit consistently
   finalText = finalText.replace(/\bspirit\b/g, 'Spirit');
   
+  // 5) Fix grammatical fragments
+  const fragmentFixes = [
+    { pattern: /\bthere the kind of energy\b/gi, replacement: 'That\'s the kind of vibe' },
+    { pattern: /\bthere the kind of\b/gi, replacement: 'That\'s the kind of' },
+    { pattern: /\bthere loud\.\b/gi, replacement: 'It\'s loud.' },
+    { pattern: /\bthere the emotional immature\b/gi, replacement: 'That\'s the emotionally immature' },
+    { pattern: /\bthere the\b/gi, replacement: 'that\'s the' }, // Catch-all for "there the X"
+  ];
+  
+  for (const { pattern, replacement } of fragmentFixes) {
+    finalText = finalText.replace(pattern, replacement);
+  }
+  
+  // 6) Reduce "energy" word count by ~2/3 using varied alternatives
+  // Keep only essential uses; replace others with context-appropriate alternatives
+  const energyReplacements = [
+    // Prioritize most impactful replacements first
+    { pattern: /\bthis energy\s+feels\b/gi, replacement: 'this current feels' },
+    { pattern: /\bcaught in this energy\b/gi, replacement: 'caught in this pattern' },
+    { pattern: /\bthe energy underneath\b/gi, replacement: 'the undertone underneath' },
+    { pattern: /\bthat reversed energy\b/gi, replacement: 'that reversed influence' },
+    { pattern: /\bthe emotional energy\b/gi, replacement: 'the emotional undertone' },
+    { pattern: /\bThat\'s the kind of energy\b/gi, replacement: 'That\'s the kind of vibe' },
+    { pattern: /\bThe energy shifts\b/gi, replacement: 'The mood shifts' },
+    { pattern: /\bwith this energy\b/gi, replacement: 'with this vibe' },
+    { pattern: /\bin this energy\b/gi, replacement: 'in this space' },
+    { pattern: /\bof this energy\b/gi, replacement: 'of this current' },
+    { pattern: /\bfull of energy\b/gi, replacement: 'full of tension' },
+    // Generic fallbacks (used sparingly)
+    { pattern: /\benergy\s+loop\b/gi, replacement: 'pattern loop' },
+    { pattern: /\benergy\s+here\b/gi, replacement: 'vibe here' },
+  ];
+  
+  // Apply energy replacements but limit to prevent over-substitution
+  let energyCount = (finalText.match(/\benergy\b/gi) || []).length;
+  for (const { pattern, replacement } of energyReplacements) {
+    if (energyCount <= 10) break; // Stop if already below target
+    finalText = finalText.replace(pattern, replacement);
+    energyCount = (finalText.match(/\benergy\b/gi) || []).length;
+  }
+  
+  // 7) Remove duplicate CTA blocks (only one "Like + Subscribe" should remain)
+  const ctaMatches = finalText.match(/Like\s*\+\s*Subscribe/gi);
+  if (ctaMatches && ctaMatches.length > 1) {
+    // Keep only the last CTA block, remove earlier ones
+    const lines = finalText.split('\n');
+    let ctaCount = 0;
+    const cleanedLines = lines.map(line => {
+      if (/Like\s*\+\s*Subscribe/i.test(line)) {
+        ctaCount++;
+        // Keep only the last occurrence
+        if (ctaCount < ctaMatches.length) {
+          return ''; // Remove duplicate
+        }
+      }
+      return line;
+    });
+    finalText = cleanedLines.filter(l => l.trim() !== '').join('\n');
+  }
+  
   if (finalText !== beforeCleanup) {
     changed = true;
   }
