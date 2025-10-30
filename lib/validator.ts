@@ -85,9 +85,11 @@ export function redactUnrevealedCards(
   let finalText = lines.join('\n');
   
   // 3) Clean up awkward article placement after redaction
-  // Fix "the this energy" / "this this energy" / "with the this energy" patterns
+  // Fix "the this energy" / "this this energy" / "with the this energy" / "this energy reversed" patterns
+  const beforeCleanup = finalText;
   finalText = finalText.replace(/\b(the|this|with the|and the)\s+this energy\b/gi, 'this energy');
-  if (finalText !== lines.join('\n')) {
+  finalText = finalText.replace(/\bthis energy\s+(reversed|lurking|sitting|hovering|underneath|beneath|feeding|anchoring)\b/gi, 'this energy');
+  if (finalText !== beforeCleanup) {
     changed = true;
   }
   
