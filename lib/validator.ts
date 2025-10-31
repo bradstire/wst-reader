@@ -86,10 +86,12 @@ export function redactUnrevealedCards(
   
   // 3) Replace all "this energy" placeholders with contextual alternatives
   const contextualReplacements = [
-    { pattern: /\bthis energy\s+energy\b/gi, replacement: 'this energy' },
+    // Catch doubled-up placeholders first
+    { pattern: /\bthis energy\s+(influence|vibe|current|undertone|pull|presence|mood|charge|force|undercurrent)\b/gi, replacement: 'that $1' },
+    { pattern: /\bthis energy\s+energy\b/gi, replacement: 'this influence' },
     { pattern: /\bthat this energy\s+energy\b/gi, replacement: 'that influence' },
-    { pattern: /\bthis energy\s+(reversed|lurking|sitting|hovering|underneath|beneath|feeding|anchoring)\b/gi, replacement: 'this energy' },
-    { pattern: /\b(the|this|with the|and the|what's feeding into this is that)\s+this energy\b/gi, replacement: 'this energy' },
+    { pattern: /\bthis energy\s+(reversed|lurking|sitting|hovering|underneath|beneath|feeding|anchoring)\b/gi, replacement: 'this influence' },
+    { pattern: /\b(the|this|with the|and the|what's feeding into this is that)\s+this energy\b/gi, replacement: 'this influence' },
     // Replace standalone "this energy" in common phrases
     { pattern: /this energy is whispering/gi, replacement: 'there\'s a whisper' },
     { pattern: /And then there's this energy\./gi, replacement: 'And then there\'s this undercurrent.' },
@@ -119,6 +121,7 @@ export function redactUnrevealedCards(
     { pattern: /\bthere anchored by\b/gi, replacement: 'It\'s anchored by' },
     { pattern: /\bthere like your foot\b/gi, replacement: 'It\'s like your foot' },
     { pattern: /\bthere that hesitation\b/gi, replacement: 'There\'s that hesitation' },
+    { pattern: /\bthere (tricky|raw|holding|hanging)\b/gi, replacement: 'It\'s $1' }, // Catch "there + adjective"
     { pattern: /this energy\s*,\s*is\b/gi, replacement: 'This influence is' }, // Fix comma splice
     { pattern: /this energy\s*,\s*also\b/gi, replacement: 'This influence also' }, // Fix comma splice
     { pattern: /\bthere the\b/gi, replacement: 'that\'s the' }, // Catch-all for "there the X"
