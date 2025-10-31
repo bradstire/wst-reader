@@ -110,12 +110,17 @@ export function redactUnrevealedCards(
   // 4) Capitalize Spirit consistently
   finalText = finalText.replace(/\bspirit\b/g, 'Spirit');
   
-  // 5) Fix grammatical fragments
+  // 5) Fix grammatical fragments and comma splices
   const fragmentFixes = [
     { pattern: /\bthere the kind of energy\b/gi, replacement: 'That\'s the kind of vibe' },
     { pattern: /\bthere the kind of\b/gi, replacement: 'That\'s the kind of' },
     { pattern: /\bthere loud\.\b/gi, replacement: 'It\'s loud.' },
     { pattern: /\bthere the emotional immature\b/gi, replacement: 'That\'s the emotionally immature' },
+    { pattern: /\bthere anchored by\b/gi, replacement: 'It\'s anchored by' },
+    { pattern: /\bthere like your foot\b/gi, replacement: 'It\'s like your foot' },
+    { pattern: /\bthere that hesitation\b/gi, replacement: 'There\'s that hesitation' },
+    { pattern: /this energy\s*,\s*is\b/gi, replacement: 'This influence is' }, // Fix comma splice
+    { pattern: /this energy\s*,\s*also\b/gi, replacement: 'This influence also' }, // Fix comma splice
     { pattern: /\bthere the\b/gi, replacement: 'that\'s the' }, // Catch-all for "there the X"
   ];
   

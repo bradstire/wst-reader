@@ -240,5 +240,12 @@ export function applyBreaks(stitched: string): string {
   }
   
   // Join paragraphs with double newlines to preserve structure
-  return processedParagraphs.join('\n\n');
+  let finalOutput = processedParagraphs.join('\n\n');
+  
+  // Final cleanup: Remove any double spaces before/after break tags
+  finalOutput = finalOutput.replace(/\s+<break/g, ' <break');
+  finalOutput = finalOutput.replace(/break[^>]*>\s+/g, 'break /> ');
+  finalOutput = finalOutput.replace(/\s{2,}/g, ' '); // Replace any remaining double spaces with single space
+  
+  return finalOutput;
 }
