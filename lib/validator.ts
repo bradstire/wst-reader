@@ -125,6 +125,7 @@ export function redactUnrevealedCards(
     { pattern: /this energy\s*,\s*is\b/gi, replacement: 'This influence is' }, // Fix comma splice
     { pattern: /this energy\s*,\s*also\b/gi, replacement: 'This influence also' }, // Fix comma splice
     { pattern: /\bthere the\b/gi, replacement: 'that\'s the' }, // Catch-all for "there the X"
+    { pattern: /\bthere about\b/gi, replacement: 'It\'s about' },
     // New: fix "this influence" comma splices
     { pattern: /\bthe this influence\b/gi, replacement: 'that influence' },
     { pattern: /\bthis influence\s*,\s*is\b/gi, replacement: 'This influence is' },
@@ -195,8 +196,10 @@ export function redactUnrevealedCards(
     { pattern: /\bthis influence's vibe\b/gi, replacement: 'this vibe' },
     { pattern: /\bthat influence's vibe\b/gi, replacement: 'that vibe' },
     { pattern: /\bthis influence this energy\b/gi, replacement: 'this influence' },
-    { pattern: /\bthis energy and this undercurrent\b/gi, replacement: 'this undercurrent' },
+    { pattern: /\bthis energy and this undercurrent\b/gi, replacement: 'the undercurrent' },
     { pattern: /\bthe supporting energies[,–-]?\s*this energy and this undercurrent\b/gi, replacement: 'the supporting influence and undercurrent' },
+    { pattern: /\bthis energy and this (influence|presence|tone|force|pull)\b/gi, replacement: 'this $1' },
+    { pattern: /\bthis (current|undertone|presence|pull|force) and this (current|undertone|presence|pull|force)\b/gi, replacement: 'this $1' },
   ];
 
   for (const { pattern, replacement } of nounCollisionFixes) {
