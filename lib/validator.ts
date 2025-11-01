@@ -135,11 +135,48 @@ export function redactUnrevealedCards(
     // More "there ..." fragments without verbs
     { pattern: /\bthere cutting through\b/gi, replacement: 'There\'s clarity cutting through' },
     { pattern: /\bthere pushing you\b/gi, replacement: 'It\'s pushing you' },
+    { pattern: /\bthere pushing against\b/gi, replacement: 'It\'s pushing against' },
+    { pattern: /\bthere flipping the script\b/gi, replacement: 'It\'s flipping the script' },
   ];
   
   for (const { pattern, replacement } of fragmentFixes) {
     finalText = finalText.replace(pattern, replacement);
   }
+  
+  // 5b) Fix redundant "it" after "this/that influence" and double echoes
+  const redundantFixes = [
+    { pattern: /\bthis influence it\s+/gi, replacement: 'this influence ' },
+    { pattern: /\bthat influence it\s+/gi, replacement: 'that influence ' },
+    { pattern: /\bthe influence of this influence\b/gi, replacement: 'that influence' },
+    { pattern: /\bthe influence of that influence\b/gi, replacement: 'that influence' },
+  ];
+  
+  for (const { pattern, replacement } of redundantFixes) {
+    finalText = finalText.replace(pattern, replacement);
+  }
+  
+  // 5c) Fix "this energy" or "this influence" doubles in same sentence
+  // Replace second occurrence with synonym
+  const doubledLines = finalText.split('\n');
+  for (let i = 0; i < doubledLines.length; i++) {
+    const line = doubledLines[i];
+    // Check for "this energy" appearing twice
+    if ((line.match(/\bthis energy\b/gi) || []).length > 1) {
+      doubledLines[i] = line.replace(/\bthis energy\b/gi, (match, offset) => {
+        // First occurrence stays, replace subsequent ones
+        const prevMatches = (line.substring(0, offset).match(/\bthis energy\b/gi) || []).length;
+        return prevMatches === 0 ? match : 'this current';
+      });
+    }
+    // Check for "this influence" appearing twice
+    if ((line.match(/\bthis influence\b/gi) || []).length > 1) {
+      doubledLines[i] = line.replace(/\bthis influence\b/gi, (match, offset) => {
+        const prevMatches = (line.substring(0, offset).match(/\bthis influence\b/gi) || []).length;
+        return prevMatches === 0 ? match : 'this vibe';
+      });
+    }
+  }
+  finalText = doubledLines.join('\n');
   
   // 6) Reduce "energy" word count by ~2/3 using varied alternatives
   // Keep only essential uses; replace others with context-appropriate alternatives
