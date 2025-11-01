@@ -125,6 +125,16 @@ export function redactUnrevealedCards(
     { pattern: /this energy\s*,\s*is\b/gi, replacement: 'This influence is' }, // Fix comma splice
     { pattern: /this energy\s*,\s*also\b/gi, replacement: 'This influence also' }, // Fix comma splice
     { pattern: /\bthere the\b/gi, replacement: 'that\'s the' }, // Catch-all for "there the X"
+    // New: fix "this influence" comma splices
+    { pattern: /\bthe this influence\b/gi, replacement: 'that influence' },
+    { pattern: /\bthis influence\s*,\s*is\b/gi, replacement: 'This influence is' },
+    { pattern: /\bthis influence\s*,\s*was\b/gi, replacement: 'This influence was' },
+    { pattern: /\bthis influence\s*,\s*shows\b/gi, replacement: 'This influence shows' },
+    { pattern: /\bthat influence\s*,\s*is\b/gi, replacement: 'That influence is' },
+    { pattern: /\bthat influence\s*,\s*was\b/gi, replacement: 'That influence was' },
+    // More "there ..." fragments without verbs
+    { pattern: /\bthere cutting through\b/gi, replacement: 'There\'s clarity cutting through' },
+    { pattern: /\bthere pushing you\b/gi, replacement: 'It\'s pushing you' },
   ];
   
   for (const { pattern, replacement } of fragmentFixes) {
@@ -157,6 +167,24 @@ export function redactUnrevealedCards(
     if (energyCount <= 10) break; // Stop if already below target
     finalText = finalText.replace(pattern, replacement);
     energyCount = (finalText.match(/\benergy\b/gi) || []).length;
+  }
+  
+  // 6b) Reduce excessive "influence" repetition with variety
+  const influenceReplacements = [
+    { pattern: /\bthis influence feels\b/gi, replacement: 'this vibe feels' },
+    { pattern: /\bthat influence holds you\b/gi, replacement: 'that presence holds you' },
+    { pattern: /\bthe this influence and this influence\b/gi, replacement: 'those two influences' },
+    { pattern: /\bthis influence\s+(pushing|driving|guiding)\b/gi, replacement: 'this pull $1' },
+  ];
+  
+  let influenceCount = (finalText.match(/\binfluence\b/gi) || []).length;
+  // Only rotate if "influence" appears more than 8 times
+  if (influenceCount > 8) {
+    for (const { pattern, replacement } of influenceReplacements) {
+      finalText = finalText.replace(pattern, replacement);
+      influenceCount = (finalText.match(/\binfluence\b/gi) || []).length;
+      if (influenceCount <= 8) break;
+    }
   }
   
   // 7) Remove duplicate CTA blocks (only one "Like + Subscribe" should remain)
