@@ -158,6 +158,14 @@ export function redactUnrevealedCards(
     { pattern: /\bthis this\b/gi, replacement: 'this' },
     { pattern: /\bthat that\b/gi, replacement: 'that' },
     { pattern: /\bthis the\b/gi, replacement: 'this is the' },
+    // Fix double determiners
+    { pattern: /\bThere's a that\b/gi, replacement: 'There\'s a' },
+    { pattern: /\bThe that\b/gi, replacement: 'That' },
+    { pattern: /\ba that\b/gi, replacement: 'a' },
+    { pattern: /\bthe that\b/gi, replacement: 'that' },
+    // Fix doubled noun phrases
+    { pattern: /\bthat influence this energy\s+/gi, replacement: 'that influence ' },
+    { pattern: /\bthis energy that influence\s+/gi, replacement: 'that influence ' },
   ];
   
   for (const { pattern, replacement } of redundantFixes) {
