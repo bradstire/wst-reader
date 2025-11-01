@@ -171,6 +171,10 @@ export function redactUnrevealedCards(
     { pattern: /\bthis reversed that\b/gi, replacement: 'this reversed' },
     { pattern: /\breversed that vibe\b/gi, replacement: 'reversed vibe' },
     { pattern: /\b(this|that) influence card reversed\b/gi, replacement: '$1 reversed influence' },
+    { pattern: /\breversed this energy\b/gi, replacement: 'reversed energy' },
+    { pattern: /\breversed this influence\b/gi, replacement: 'reversed influence' },
+    { pattern: /\bthe reversed there\b/gi, replacement: 'the reversed card' },
+    { pattern: /\bthe supporting there\b/gi, replacement: 'the supporting influence' },
     // Fix doubled noun phrases
     { pattern: /\bthat influence this energy\s+/gi, replacement: 'that influence ' },
     { pattern: /\bthis energy that influence\s+/gi, replacement: 'that influence ' },
@@ -191,6 +195,8 @@ export function redactUnrevealedCards(
     { pattern: /\bthis influence's vibe\b/gi, replacement: 'this vibe' },
     { pattern: /\bthat influence's vibe\b/gi, replacement: 'that vibe' },
     { pattern: /\bthis influence this energy\b/gi, replacement: 'this influence' },
+    { pattern: /\bthis energy and this undercurrent\b/gi, replacement: 'this undercurrent' },
+    { pattern: /\bthe supporting energies[,–-]?\s*this energy and this undercurrent\b/gi, replacement: 'the supporting influence and undercurrent' },
   ];
 
   for (const { pattern, replacement } of nounCollisionFixes) {
@@ -256,6 +262,7 @@ export function redactUnrevealedCards(
   // 5f) Capitalize lowercase sentence openings
   finalText = finalText.replace(/(^|\n)(\s*)([a-z])/g, (_, start, spaces, char) => `${start}${spaces}${char.toUpperCase()}`);
   finalText = finalText.replace(/([.!?]\s+)([a-z])/g, (_, prefix, char) => `${prefix}${char.toUpperCase()}`);
+  finalText = finalText.replace(/(\u2026|\.\.\.)(\s*)([a-z])/g, (_, ellipsis, spaces, char) => `${ellipsis}${spaces}${char.toUpperCase()}`);
 
   // 5g) Rotate consecutive synonym sentences
   const synonymCycle = ['influence', 'vibe', 'current', 'pull', 'undertone', 'presence', 'force', 'charge', 'tone', 'undercurrent'];
