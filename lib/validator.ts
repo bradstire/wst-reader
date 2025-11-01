@@ -125,7 +125,6 @@ export function redactUnrevealedCards(
     { pattern: /this energy\s*,\s*is\b/gi, replacement: 'This influence is' }, // Fix comma splice
     { pattern: /this energy\s*,\s*also\b/gi, replacement: 'This influence also' }, // Fix comma splice
     { pattern: /\bthere the\b/gi, replacement: 'that\'s the' }, // Catch-all for "there the X"
-    { pattern: /\bthere about\b/gi, replacement: 'It\'s about' },
     // New: fix "this influence" comma splices
     { pattern: /\bthe this influence\b/gi, replacement: 'that influence' },
     { pattern: /\bthis influence\s*,\s*is\b/gi, replacement: 'This influence is' },
@@ -162,6 +161,7 @@ export function redactUnrevealedCards(
     { pattern: /\bthis influence this\s+/gi, replacement: 'this influence ' },
     { pattern: /\bthis this\b/gi, replacement: 'this' },
     { pattern: /\bthat that\b/gi, replacement: 'that' },
+    { pattern: /\bis is\b/gi, replacement: 'is' },
     { pattern: /\bthis the\b/gi, replacement: 'this is the' },
     // Fix double determiners
     { pattern: /\bThere's a that\b/gi, replacement: 'There\'s a' },
@@ -179,6 +179,11 @@ export function redactUnrevealedCards(
     // Fix doubled noun phrases
     { pattern: /\bthat influence this energy\s+/gi, replacement: 'that influence ' },
     { pattern: /\bthis energy that influence\s+/gi, replacement: 'that influence ' },
+    { pattern: /\bthis influence vibe\b/gi, replacement: 'this influence' },
+    { pattern: /\ba this\s+(current|undertone|presence|pull|force|tone|undercurrent)\b/gi, replacement: 'a $1' },
+    { pattern: /\bthe this\s+(current|undertone|presence|pull|force|tone|undercurrent)\b/gi, replacement: 'the $1' },
+    { pattern: /\bthat heart this vibe\b/gi, replacement: 'your heart—this vibe' },
+    { pattern: /\bpaired this influence as a supporting vibe\b/gi, replacement: 'paired with a supporting influence' },
   ];
   
   for (const { pattern, replacement } of redundantFixes) {
@@ -196,10 +201,11 @@ export function redactUnrevealedCards(
     { pattern: /\bthis influence's vibe\b/gi, replacement: 'this vibe' },
     { pattern: /\bthat influence's vibe\b/gi, replacement: 'that vibe' },
     { pattern: /\bthis influence this energy\b/gi, replacement: 'this influence' },
-    { pattern: /\bthis energy and this undercurrent\b/gi, replacement: 'the undercurrent' },
+    { pattern: /\bthis energy and this undercurrent\b/gi, replacement: 'this undercurrent' },
     { pattern: /\bthe supporting energies[,–-]?\s*this energy and this undercurrent\b/gi, replacement: 'the supporting influence and undercurrent' },
     { pattern: /\bthis energy and this (influence|presence|tone|force|pull)\b/gi, replacement: 'this $1' },
     { pattern: /\bthis (current|undertone|presence|pull|force) and this (current|undertone|presence|pull|force)\b/gi, replacement: 'this $1' },
+    { pattern: /\bguarding that heart this vibe\b/gi, replacement: 'guarding your heart—this vibe' },
   ];
 
   for (const { pattern, replacement } of nounCollisionFixes) {
@@ -216,6 +222,25 @@ export function redactUnrevealedCards(
   for (const { pattern, replacement } of pluralFixes) {
     finalText = finalText.replace(pattern, replacement);
   }
+
+  // 5e) Fix lines starting with "There" fragments lacking verbs
+  const startAdjustedLines = finalText.split('\n');
+  for (let i = 0; i < startAdjustedLines.length; i++) {
+    const line = startAdjustedLines[i];
+    const leadingSpacesMatch = line.match(/^\s*/);
+    const leadingSpaces = leadingSpacesMatch ? leadingSpacesMatch[0] : '';
+    const trimmed = line.slice(leadingSpaces.length);
+    const thereMatch = trimmed.match(/^(there)\s+(?!('s|are|is|was|were|will|has|have|can|could|should|would|may|might|did|do|does|be|been|being|it|there)\b)(.+)/i);
+    if (thereMatch) {
+      const rest = thereMatch[3].trim();
+      if (rest.length === 0) {
+        continue;
+      }
+      const replacement = /\b(you|your)\b/i.test(rest) ? `You're ${rest}` : `It's ${rest}`;
+      startAdjustedLines[i] = leadingSpaces + replacement;
+    }
+  }
+  finalText = startAdjustedLines.join('\n');
   
   // 5e) Fix "this energy" or "this influence" doubles in same sentence
   // Replace second occurrence with synonym
@@ -264,10 +289,13 @@ export function redactUnrevealedCards(
 
   // 5f) Capitalize lowercase sentence openings
   finalText = finalText.replace(/(^|\n)(\s*)([a-z])/g, (_, start, spaces, char) => `${start}${spaces}${char.toUpperCase()}`);
-  finalText = finalText.replace(/([.!?]\s+)([a-z])/g, (_, prefix, char) => `${prefix}${char.toUpperCase()}`);
+  finalText = finalText.replace(/([.!?]["']?\s+)([a-z])/g, (_, prefix, char) => `${prefix}${char.toUpperCase()}`);
   finalText = finalText.replace(/(\u2026|\.\.\.)(\s*)([a-z])/g, (_, ellipsis, spaces, char) => `${ellipsis}${spaces}${char.toUpperCase()}`);
 
-  // 5g) Rotate consecutive synonym sentences
+  // 5g) Fix malformed break sequences
+  finalText = finalText.replace(/(?<!<)break \/>/g, 'break. <break />');
+
+  // 5h) Rotate consecutive synonym sentences
   const synonymCycle = ['influence', 'vibe', 'current', 'pull', 'undertone', 'presence', 'force', 'charge', 'tone', 'undercurrent'];
   const sentences: string[] = [];
   let lastIndex = 0;
