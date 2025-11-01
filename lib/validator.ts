@@ -141,6 +141,10 @@ export function redactUnrevealedCards(
     { pattern: /\bthere not gentle\b/gi, replacement: 'It\'s not gentle' },
     { pattern: /\bthere quietly telling\b/gi, replacement: 'They\'re quietly telling' },
     { pattern: /\bthere like the calm\b/gi, replacement: 'It\'s like the calm' },
+    { pattern: /\bthere all about\b/gi, replacement: 'They\'re all about' },
+    { pattern: /\bthere supposed to be\b/gi, replacement: 'They\'re supposed to be' },
+    { pattern: /\bthere demanding\b/gi, replacement: 'They\'re demanding' },
+    { pattern: /\bthere not about\b/gi, replacement: 'It\'s not about' },
   ];
   
   for (const { pattern, replacement } of fragmentFixes) {
@@ -163,12 +167,33 @@ export function redactUnrevealedCards(
     { pattern: /\bThe that\b/gi, replacement: 'That' },
     { pattern: /\ba that\b/gi, replacement: 'a' },
     { pattern: /\bthe that\b/gi, replacement: 'that' },
+    { pattern: /\bthat reversed that\b/gi, replacement: 'that reversed' },
+    { pattern: /\bthis reversed that\b/gi, replacement: 'this reversed' },
+    { pattern: /\breversed that vibe\b/gi, replacement: 'reversed vibe' },
+    { pattern: /\b(this|that) influence card reversed\b/gi, replacement: '$1 reversed influence' },
     // Fix doubled noun phrases
     { pattern: /\bthat influence this energy\s+/gi, replacement: 'that influence ' },
     { pattern: /\bthis energy that influence\s+/gi, replacement: 'that influence ' },
   ];
   
   for (const { pattern, replacement } of redundantFixes) {
+    finalText = finalText.replace(pattern, replacement);
+  }
+
+  // 5c) Resolve noun collisions (keep strongest noun)
+  const nounCollisionFixes = [
+    { pattern: /\bthat reversed this (current|undertone|pull|presence|tone|force)\b/gi, replacement: 'that reversed $1' },
+    { pattern: /\bthis reversed this (current|undertone|pull|presence|tone|force)\b/gi, replacement: 'this reversed $1' },
+    { pattern: /\bthis energy['’]s influence\b/gi, replacement: 'this influence' },
+    { pattern: /\bthat energy['’]s influence\b/gi, replacement: 'that influence' },
+    { pattern: /\bthis influence['’]s energy\b/gi, replacement: 'this influence' },
+    { pattern: /\bthat influence['’]s energy\b/gi, replacement: 'that influence' },
+    { pattern: /\bthis influence's vibe\b/gi, replacement: 'this vibe' },
+    { pattern: /\bthat influence's vibe\b/gi, replacement: 'that vibe' },
+    { pattern: /\bthis influence this energy\b/gi, replacement: 'this influence' },
+  ];
+
+  for (const { pattern, replacement } of nounCollisionFixes) {
     finalText = finalText.replace(pattern, replacement);
   }
   
@@ -183,7 +208,7 @@ export function redactUnrevealedCards(
     finalText = finalText.replace(pattern, replacement);
   }
   
-  // 5c) Fix "this energy" or "this influence" doubles in same sentence
+  // 5e) Fix "this energy" or "this influence" doubles in same sentence
   // Replace second occurrence with synonym
   const doubledLines = finalText.split('\n');
   for (let i = 0; i < doubledLines.length; i++) {
