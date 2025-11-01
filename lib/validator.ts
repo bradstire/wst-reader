@@ -137,6 +137,10 @@ export function redactUnrevealedCards(
     { pattern: /\bthere pushing you\b/gi, replacement: 'It\'s pushing you' },
     { pattern: /\bthere pushing against\b/gi, replacement: 'It\'s pushing against' },
     { pattern: /\bthere flipping the script\b/gi, replacement: 'It\'s flipping the script' },
+    // Additional "there ..." fragments
+    { pattern: /\bthere not gentle\b/gi, replacement: 'It\'s not gentle' },
+    { pattern: /\bthere quietly telling\b/gi, replacement: 'They\'re quietly telling' },
+    { pattern: /\bthere like the calm\b/gi, replacement: 'It\'s like the calm' },
   ];
   
   for (const { pattern, replacement } of fragmentFixes) {
@@ -149,9 +153,25 @@ export function redactUnrevealedCards(
     { pattern: /\bthat influence it\s+/gi, replacement: 'that influence ' },
     { pattern: /\bthe influence of this influence\b/gi, replacement: 'that influence' },
     { pattern: /\bthe influence of that influence\b/gi, replacement: 'that influence' },
+    // Fix duplicate "this" words
+    { pattern: /\bthis influence this\s+/gi, replacement: 'this influence ' },
+    { pattern: /\bthis this\b/gi, replacement: 'this' },
+    { pattern: /\bthat that\b/gi, replacement: 'that' },
+    { pattern: /\bthis the\b/gi, replacement: 'this is the' },
   ];
   
   for (const { pattern, replacement } of redundantFixes) {
+    finalText = finalText.replace(pattern, replacement);
+  }
+  
+  // 5d) Fix plural/singular mismatches
+  const pluralFixes = [
+    { pattern: /\bas a supporting energies\b/gi, replacement: 'as a supporting influence' },
+    { pattern: /\bsupporting energies is\b/gi, replacement: 'supporting influence is' },
+    { pattern: /\bsupporting energies\s+(reminding|telling|showing)/gi, replacement: 'supporting influence $1' },
+  ];
+  
+  for (const { pattern, replacement } of pluralFixes) {
     finalText = finalText.replace(pattern, replacement);
   }
   
@@ -173,6 +193,21 @@ export function redactUnrevealedCards(
       doubledLines[i] = line.replace(/\bthis influence\b/gi, (match, offset) => {
         const prevMatches = (line.substring(0, offset).match(/\bthis influence\b/gi) || []).length;
         return prevMatches === 0 ? match : 'this vibe';
+      });
+    }
+    // Check for standalone "influence" appearing twice
+    if ((line.match(/\binfluence\b/gi) || []).length > 1) {
+      doubledLines[i] = line.replace(/\binfluence\b/gi, (match, offset) => {
+        const prevMatches = (line.substring(0, offset).match(/\binfluence\b/gi) || []).length;
+        // Replace second occurrence with a synonym
+        return prevMatches === 0 ? match : ['current', 'vibe', 'pull', 'force'][prevMatches % 4];
+      });
+    }
+    // Check for standalone "energy" appearing twice (rare, but catch it)
+    if ((line.match(/\benergy\b/gi) || []).length > 1) {
+      doubledLines[i] = line.replace(/\benergy\b/gi, (match, offset) => {
+        const prevMatches = (line.substring(0, offset).match(/\benergy\b/gi) || []).length;
+        return prevMatches === 0 ? match : ['vibe', 'current', 'undertone', 'charge'][prevMatches % 4];
       });
     }
   }
