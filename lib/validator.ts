@@ -230,21 +230,75 @@ export function redactUnrevealedCards(
     }
     // Check for standalone "influence" appearing twice
     if ((line.match(/\binfluence\b/gi) || []).length > 1) {
+      const synonyms = ['current', 'vibe', 'pull', 'force', 'undertone', 'presence', 'charge', 'tone'];
       doubledLines[i] = line.replace(/\binfluence\b/gi, (match, offset) => {
         const prevMatches = (line.substring(0, offset).match(/\binfluence\b/gi) || []).length;
-        // Replace second occurrence with a synonym
-        return prevMatches === 0 ? match : ['current', 'vibe', 'pull', 'force'][prevMatches % 4];
+        return prevMatches === 0 ? match : (() => {
+          const next = synonyms[prevMatches % synonyms.length];
+          return match[0] === match[0].toUpperCase() ? next.charAt(0).toUpperCase() + next.slice(1) : next;
+        })();
       });
     }
     // Check for standalone "energy" appearing twice (rare, but catch it)
     if ((line.match(/\benergy\b/gi) || []).length > 1) {
+      const energySyns = ['vibe', 'current', 'undertone', 'charge', 'pull', 'presence'];
       doubledLines[i] = line.replace(/\benergy\b/gi, (match, offset) => {
         const prevMatches = (line.substring(0, offset).match(/\benergy\b/gi) || []).length;
-        return prevMatches === 0 ? match : ['vibe', 'current', 'undertone', 'charge'][prevMatches % 4];
+        return prevMatches === 0 ? match : (() => {
+          const next = energySyns[prevMatches % energySyns.length];
+          return match[0] === match[0].toUpperCase() ? next.charAt(0).toUpperCase() + next.slice(1) : next;
+        })();
       });
     }
   }
   finalText = doubledLines.join('\n');
+
+  // 5f) Capitalize lowercase sentence openings
+  finalText = finalText.replace(/(^|\n)(\s*)([a-z])/g, (_, start, spaces, char) => `${start}${spaces}${char.toUpperCase()}`);
+  finalText = finalText.replace(/([.!?]\s+)([a-z])/g, (_, prefix, char) => `${prefix}${char.toUpperCase()}`);
+
+  // 5g) Rotate consecutive synonym sentences
+  const synonymCycle = ['influence', 'vibe', 'current', 'pull', 'undertone', 'presence', 'force', 'charge', 'tone', 'undercurrent'];
+  const sentences: string[] = [];
+  let lastIndex = 0;
+  const boundaryRegex = /[.!?]/g;
+  let match;
+  while ((match = boundaryRegex.exec(finalText)) !== null) {
+    let end = boundaryRegex.lastIndex;
+    while (end < finalText.length && /\s/.test(finalText[end])) {
+      end++;
+    }
+    sentences.push(finalText.slice(lastIndex, end));
+    lastIndex = end;
+  }
+  if (lastIndex < finalText.length) {
+    sentences.push(finalText.slice(lastIndex));
+  }
+
+  let prevSynonym: string | null = null;
+  for (let i = 0; i < sentences.length; i++) {
+    const sentence = sentences[i];
+    const synonymMatch = sentence.match(/\b(influence|vibe|current|pull|undertone|presence|force|charge|tone|undercurrent)\b/i);
+    if (!synonymMatch) {
+      prevSynonym = null;
+      continue;
+    }
+    const originalWord = synonymMatch[0];
+    const lowerWord = originalWord.toLowerCase();
+    if (prevSynonym && prevSynonym === lowerWord) {
+      const currentIndex = synonymCycle.indexOf(lowerWord);
+      const nextWord = synonymCycle[(currentIndex + 1) % synonymCycle.length];
+      const replacement = originalWord[0] === originalWord[0].toUpperCase()
+        ? nextWord.charAt(0).toUpperCase() + nextWord.slice(1)
+        : nextWord;
+      const replaceRegex = new RegExp(`\b${originalWord}\b`);
+      sentences[i] = sentence.replace(replaceRegex, replacement);
+      prevSynonym = nextWord;
+    } else {
+      prevSynonym = lowerWord;
+    }
+  }
+  finalText = sentences.join('');
   
   // 6) Reduce "energy" word count by ~2/3 using varied alternatives
   // Keep only essential uses; replace others with context-appropriate alternatives
