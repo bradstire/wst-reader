@@ -1,68 +1,134 @@
 [
   {
     "sign": "Aries",
-    "path": "output/FULL_READING__Aries__LOCK__2025-11-03T05-35-28Z.txt",
+    "path": "output/FULL_READING__Aries__LOCK__2025-11-03T07-13-57Z.txt",
     "validator_hash": "af871599b2ecfad2230750512cb03a2805971a62",
-    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards",
-    "energy_before": 19,
-    "energy_after": 9,
-    "signature_before": 10,
+    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ",
+    "energy_before": 11,
+    "energy_after": 7,
+    "signature_before": 7,
     "signature_after": 3,
-    "timestamp": "2025-11-03T05-35-28Z"
+    "timestamp": "2025-11-03T07-13-57Z"
+  },
+  {
+    "sign": "Taurus",
+    "path": "output/FULL_READING__Taurus__LOCK__2025-11-03T07-16-46Z.txt",
+    "validator_hash": "af871599b2ecfad2230750512cb03a2805971a62",
+    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ",
+    "energy_before": 16,
+    "energy_after": 9,
+    "signature_before": 5,
+    "signature_after": 3,
+    "timestamp": "2025-11-03T07-16-46Z"
+  },
+  {
+    "sign": "Gemini",
+    "path": "output/FULL_READING__Gemini__LOCK__2025-11-03T07-18-04Z.txt",
+    "validator_hash": "af871599b2ecfad2230750512cb03a2805971a62",
+    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ",
+    "energy_before": 23,
+    "energy_after": 7,
+    "signature_before": 9,
+    "signature_after": 3,
+    "timestamp": "2025-11-03T07-18-04Z"
   },
   {
     "sign": "Cancer",
-    "path": "output/FULL_READING__Cancer__LOCK__2025-11-03T05-36-51Z.txt",
+    "path": "output/FULL_READING__Cancer__LOCK__2025-11-03T07-19-35Z.txt",
     "validator_hash": "af871599b2ecfad2230750512cb03a2805971a62",
-    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards",
+    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ",
     "energy_before": 16,
-    "energy_after": 9,
-    "signature_before": 9,
+    "energy_after": 10,
+    "signature_before": 10,
     "signature_after": 3,
-    "timestamp": "2025-11-03T05-36-51Z"
+    "timestamp": "2025-11-03T07-19-35Z"
   },
   {
-    "sign": "Capricorn",
-    "path": "output/FULL_READING__Capricorn__LOCK__2025-11-03T05-02-31Z.txt",
+    "sign": "Leo",
+    "path": "output/FULL_READING__Leo__LOCK__2025-11-03T07-20-46Z.txt",
     "validator_hash": "af871599b2ecfad2230750512cb03a2805971a62",
-    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards",
-    "energy_before": 8,
-    "energy_after": 8,
+    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ",
+    "energy_before": 17,
+    "energy_after": 6,
     "signature_before": 7,
     "signature_after": 3,
-    "timestamp": "2025-11-03T05-02-31Z"
-  },
-  {
-    "sign": "Pisces",
-    "path": "output/FULL_READING__Pisces__LOCK__2025-11-03T05-39-14Z.txt",
-    "validator_hash": "af871599b2ecfad2230750512cb03a2805971a62",
-    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards",
-    "energy_before": 21,
-    "energy_after": 7,
-    "signature_before": 8,
-    "signature_after": 3,
-    "timestamp": "2025-11-03T05-39-14Z"
-  },
-  {
-    "sign": "Scorpio",
-    "path": "output/FULL_READING__Scorpio__LOCK__2025-11-03T05-37-59Z.txt",
-    "validator_hash": "af871599b2ecfad2230750512cb03a2805971a62",
-    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards",
-    "energy_before": 17,
-    "energy_after": 10,
-    "signature_before": 11,
-    "signature_after": 3,
-    "timestamp": "2025-11-03T05-37-59Z"
+    "timestamp": "2025-11-03T07-20-46Z"
   },
   {
     "sign": "Virgo",
-    "path": "output/FULL_READING__Virgo__LOCK__2025-11-03T05-46-57Z.txt",
+    "path": "output/FULL_READING__Virgo__LOCK__2025-11-03T07-22-01Z.txt",
     "validator_hash": "af871599b2ecfad2230750512cb03a2805971a62",
-    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards",
-    "energy_before": 10,
-    "energy_after": 10,
-    "signature_before": 11,
+    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ",
+    "energy_before": 21,
+    "energy_after": 8,
+    "signature_before": 10,
     "signature_after": 3,
-    "timestamp": "2025-11-03T05-46-57Z"
+    "timestamp": "2025-11-03T07-22-01Z"
+  },
+  {
+    "sign": "Libra",
+    "path": "output/FULL_READING__Libra__LOCK__2025-11-03T07-23-06Z.txt",
+    "validator_hash": "af871599b2ecfad2230750512cb03a2805971a62",
+    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ",
+    "energy_before": 17,
+    "energy_after": 7,
+    "signature_before": 10,
+    "signature_after": 3,
+    "timestamp": "2025-11-03T07-23-06Z"
+  },
+  {
+    "sign": "Scorpio",
+    "path": "output/FULL_READING__Scorpio__LOCK__2025-11-03T07-24-14Z.txt",
+    "validator_hash": "af871599b2ecfad2230750512cb03a2805971a62",
+    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ",
+    "energy_before": 19,
+    "energy_after": 9,
+    "signature_before": 9,
+    "signature_after": 3,
+    "timestamp": "2025-11-03T07-24-14Z"
+  },
+  {
+    "sign": "Sagittarius",
+    "path": "output/FULL_READING__Sagittarius__LOCK__2025-11-03T07-25-29Z.txt",
+    "validator_hash": "af871599b2ecfad2230750512cb03a2805971a62",
+    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ",
+    "energy_before": 15,
+    "energy_after": 9,
+    "signature_before": 12,
+    "signature_after": 3,
+    "timestamp": "2025-11-03T07-25-29Z"
+  },
+  {
+    "sign": "Capricorn",
+    "path": "output/FULL_READING__Capricorn__LOCK__2025-11-03T07-26-42Z.txt",
+    "validator_hash": "af871599b2ecfad2230750512cb03a2805971a62",
+    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ",
+    "energy_before": 22,
+    "energy_after": 0,
+    "signature_before": 10,
+    "signature_after": 3,
+    "timestamp": "2025-11-03T07-26-42Z"
+  },
+  {
+    "sign": "Aquarius",
+    "path": "output/FULL_READING__Aquarius__LOCK__2025-11-03T07-27-49Z.txt",
+    "validator_hash": "af871599b2ecfad2230750512cb03a2805971a62",
+    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ",
+    "energy_before": 11,
+    "energy_after": 9,
+    "signature_before": 8,
+    "signature_after": 3,
+    "timestamp": "2025-11-03T07-27-49Z"
+  },
+  {
+    "sign": "Pisces",
+    "path": "output/FULL_READING__Pisces__LOCK__2025-11-03T07-28-53Z.txt",
+    "validator_hash": "af871599b2ecfad2230750512cb03a2805971a62",
+    "pass_order": "card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ",
+    "energy_before": 19,
+    "energy_after": 10,
+    "signature_before": 9,
+    "signature_after": 3,
+    "timestamp": "2025-11-03T07-28-53Z"
   }
 ]
