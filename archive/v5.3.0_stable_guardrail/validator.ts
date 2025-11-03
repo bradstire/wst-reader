@@ -130,8 +130,10 @@ export function redactUnrevealedCards(
     { pattern: /\bthis influence\s*,\s*is\b/gi, replacement: 'This influence is' },
     { pattern: /\bthis influence\s*,\s*was\b/gi, replacement: 'This influence was' },
     { pattern: /\bthis influence\s*,\s*shows\b/gi, replacement: 'This influence shows' },
+    { pattern: /\bthis influence\s*,\s*says\b/gi, replacement: 'This influence says' },
     { pattern: /\bthat influence\s*,\s*is\b/gi, replacement: 'That influence is' },
     { pattern: /\bthat influence\s*,\s*was\b/gi, replacement: 'That influence was' },
+    { pattern: /\bthat influence\s*,\s*says\b/gi, replacement: 'That influence says' },
     // More "there ..." fragments without verbs
     { pattern: /\bthere cutting through\b/gi, replacement: 'There\'s clarity cutting through' },
     { pattern: /\bthere pushing you\b/gi, replacement: 'It\'s pushing you' },
@@ -145,6 +147,15 @@ export function redactUnrevealedCards(
     { pattern: /\bthere supposed to be\b/gi, replacement: 'They\'re supposed to be' },
     { pattern: /\bthere demanding\b/gi, replacement: 'They\'re demanding' },
     { pattern: /\bthere not about\b/gi, replacement: 'It\'s not about' },
+    { pattern: /\bThere about\b/g, replacement: 'It\'s about' },
+    { pattern: /\bthere about\b/g, replacement: 'it\'s about' },
+    { pattern: /\bThere (trying|going|working|building|pushing|holding|calling|pressing|fighting|messing)\b/g, replacement: 'They\'re $1' },
+    { pattern: /\bthere (trying|going|working|building|pushing|holding|calling|pressing|fighting|messing)\b/g, replacement: 'they\'re $1' },
+    { pattern: /\bThere not\b/g, replacement: 'They\'re not' },
+    { pattern: /\bthere not\b/g, replacement: 'they\'re not' },
+    { pattern: /\bPart of there about\b/gi, replacement: 'Part of this is about' },
+    { pattern: /\bThere draining\b/g, replacement: 'It\'s draining' },
+    { pattern: /\bthere draining\b/g, replacement: 'it\'s draining' },
   ];
   
   for (const { pattern, replacement } of fragmentFixes) {
@@ -167,17 +178,23 @@ export function redactUnrevealedCards(
     { pattern: /\bThe that\b/gi, replacement: 'That' },
     { pattern: /\ba that\b/gi, replacement: 'a' },
     { pattern: /\bthe that\b/gi, replacement: 'that' },
+    { pattern: /\ba this\b/gi, replacement: 'this' },
+    { pattern: /\bthat this\b/gi, replacement: 'this' },
+    { pattern: /\bthat little this\b/gi, replacement: 'that little' },
     { pattern: /\bthat reversed that\b/gi, replacement: 'that reversed' },
     { pattern: /\bthis reversed that\b/gi, replacement: 'this reversed' },
     { pattern: /\breversed that vibe\b/gi, replacement: 'reversed vibe' },
     { pattern: /\b(this|that) influence card reversed\b/gi, replacement: '$1 reversed influence' },
     { pattern: /\breversed this energy\b/gi, replacement: 'reversed energy' },
     { pattern: /\breversed this influence\b/gi, replacement: 'reversed influence' },
+    { pattern: /\breversed (energy|influence|current)\b/gi, replacement: 'reversed card' },
     { pattern: /\bthe reversed there\b/gi, replacement: 'the reversed card' },
     { pattern: /\bthe supporting there\b/gi, replacement: 'the supporting influence' },
     // Fix doubled noun phrases
     { pattern: /\bthat influence this energy\s+/gi, replacement: 'that influence ' },
     { pattern: /\bthis energy that influence\s+/gi, replacement: 'that influence ' },
+    { pattern: /\bthis energy card\b/gi, replacement: 'this card' },
+    { pattern: /\bthis energy combined this influence\b/gi, replacement: 'this influence' },
   ];
   
   for (const { pattern, replacement } of redundantFixes) {
@@ -307,14 +324,12 @@ export function redactUnrevealedCards(
   }
   finalText = sentences.join('');
   
-  // 6) Reduce "energy" word count by ~2/3 using varied alternatives
-  // Keep only essential uses; replace others with context-appropriate alternatives
+  // 6) Guardrail (2): Enforce looping energy-cap (case-insensitive) to ≤10
+  const energySynonyms = ['current', 'vibe', 'presence', 'pull', 'shift', 'undertone', 'tone', 'force', 'moment', 'card'];
   const energyReplacements = [
-    // Prioritize most impactful replacements first
     { pattern: /\bthis energy\s+feels\b/gi, replacement: 'this current feels' },
     { pattern: /\bcaught in this energy\b/gi, replacement: 'caught in this pattern' },
     { pattern: /\bthe energy underneath\b/gi, replacement: 'the undertone underneath' },
-    { pattern: /\bthat reversed energy\b/gi, replacement: 'that reversed influence' },
     { pattern: /\bthe emotional energy\b/gi, replacement: 'the emotional undertone' },
     { pattern: /\bThat\'s the kind of energy\b/gi, replacement: 'That\'s the kind of vibe' },
     { pattern: /\bThe energy shifts\b/gi, replacement: 'The mood shifts' },
@@ -322,18 +337,58 @@ export function redactUnrevealedCards(
     { pattern: /\bin this energy\b/gi, replacement: 'in this space' },
     { pattern: /\bof this energy\b/gi, replacement: 'of this current' },
     { pattern: /\bfull of energy\b/gi, replacement: 'full of tension' },
-    // Generic fallbacks (used sparingly)
     { pattern: /\benergy\s+loop\b/gi, replacement: 'pattern loop' },
     { pattern: /\benergy\s+here\b/gi, replacement: 'vibe here' },
+    { pattern: /\byour own energy\b/gi, replacement: 'your own vibe' },
+    { pattern: /\bthis energy can\b/gi, replacement: 'this card can' },
+    { pattern: /\bthis energy is\b/gi, replacement: 'this presence is' },
+    { pattern: /\bthis energy was\b/gi, replacement: 'this presence was' },
+    { pattern: /\bthis energy doesn\'t\b/gi, replacement: 'this card doesn\'t' },
+    { pattern: /\bthis energy isn\'t\b/gi, replacement: 'this card isn\'t' },
+    { pattern: /\bstubborn energy\b/gi, replacement: 'stubborn presence' },
+    { pattern: /\breckless energy\b/gi, replacement: 'reckless vibe' },
+    { pattern: /\bego energy\b/gi, replacement: 'ego pull' },
+    { pattern: /\bfiery energy\b/gi, replacement: 'fiery current' },
+    { pattern: /\bthe energy\b/gi, replacement: 'the current' },
+    { pattern: /\bthis energy\b/gi, replacement: 'this presence' },
+    { pattern: /\bthat energy\b/gi, replacement: 'that presence' },
   ];
-  
-  // Apply energy replacements but limit to prevent over-substitution
+
   let energyCount = (finalText.match(/\benergy\b/gi) || []).length;
-  for (const { pattern, replacement } of energyReplacements) {
-    if (energyCount <= 10) break; // Stop if already below target
-    finalText = finalText.replace(pattern, replacement);
+  const initialEnergyCount = energyCount;
+  let energyLoopIndex = 0;
+  let totalEnergyPatternMatches = 0;
+  let fallbackReplacements = 0;
+  while (energyCount > 10 && energyLoopIndex < 200) {
+    for (const { pattern, replacement } of energyReplacements) {
+      if (energyCount <= 10) break;
+      const matches = finalText.match(pattern);
+      const replacements = matches ? matches.length : 0;
+      if (replacements > 0) {
+        totalEnergyPatternMatches += replacements;
+      }
+      finalText = finalText.replace(pattern, replacement);
+      energyCount = (finalText.match(/\benergy\b/gi) || []).length;
+    }
+    if (energyCount <= 10) break;
+    let fallbackDidReplace = false;
+    finalText = finalText.replace(/\benergy\b/i, (match) => {
+      fallbackDidReplace = true;
+      const synonym = energySynonyms[energyLoopIndex % energySynonyms.length] || 'vibe';
+      energyLoopIndex++;
+      return match[0] === match[0].toUpperCase()
+        ? synonym.charAt(0).toUpperCase() + synonym.slice(1)
+        : synonym;
+    });
     energyCount = (finalText.match(/\benergy\b/gi) || []).length;
+    if (fallbackDidReplace) {
+      fallbackReplacements += 1;
+    }
+    energyLoopIndex++;
   }
+  console.log(
+    `[validator] Energy pass: initial=${initialEnergyCount}, patternMatches=${totalEnergyPatternMatches}, fallbackReplacements=${fallbackReplacements}, remaining=${energyCount}`
+  );
   
   // 6b) Reduce excessive "influence" repetition with variety
   const influenceReplacements = [
@@ -357,9 +412,9 @@ export function redactUnrevealedCards(
   const ctaMatches = finalText.match(/Like\s*\+\s*Subscribe/gi);
   if (ctaMatches && ctaMatches.length > 1) {
     // Keep only the last CTA block, remove earlier ones
-    const lines = finalText.split('\n');
+    const ctaLines = finalText.split('\n');
     let ctaCount = 0;
-    const cleanedLines = lines.map(line => {
+    const cleanedLines = ctaLines.map(line => {
       if (/Like\s*\+\s*Subscribe/i.test(line)) {
         ctaCount++;
         // Keep only the last occurrence
@@ -371,6 +426,41 @@ export function redactUnrevealedCards(
     });
     finalText = cleanedLines.filter(l => l.trim() !== '').join('\n');
   }
+
+  // 8) Guardrail (3): Cap signature lines at 3 total
+  const signaturePatterns = [
+    /\bYou knew[^.!?\n]*/gi,
+    /\bDon\'t lie to yourself[^.!?\n]*/gi,
+  ];
+  const softReplacements = ['You sensed this', 'You felt this already', 'You already clocked this'];
+  let signatureCount = 0;
+  let softIndex = 0;
+  let signatureSoftened = 0;
+
+  let signatureFound = 0;
+  for (const pattern of signaturePatterns) {
+    const patternMatches = finalText.match(new RegExp(pattern.source, pattern.flags));
+    if (patternMatches) {
+      signatureFound += patternMatches.length;
+    }
+  }
+
+  for (const pattern of signaturePatterns) {
+    finalText = finalText.replace(pattern, (match) => {
+      signatureCount++;
+      if (signatureCount > 3) {
+        const soft = softReplacements[softIndex % softReplacements.length];
+        softIndex++;
+        signatureSoftened++;
+        return soft;
+      }
+      return match;
+    });
+  }
+
+  console.log(
+    `[validator] Signature pass: matched=${signatureFound}, softened=${signatureSoftened}`
+  );
   
   if (finalText !== beforeCleanup) {
     changed = true;
