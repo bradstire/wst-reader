@@ -1,0 +1,188 @@
+export function enforcePostFlight(text: string): PostFlightMetrics {
+  let output = text;
+  const energyRegex = /\benergy\b/gi;
+  const initialEnergy = countMatches(output, energyRegex);
+
+  let energyCount = initialEnergy;
+  let energyReplacements = 0;
+  let synonymIndex = 0;
+
+  const applyEnergyPattern = (pattern: RegExp, replacer: (match: string) => string) => {
+    let replaced = false;
+    output = output.replace(pattern, (match) => {
+      if (energyCount <= 10) {
+        return match;
+      }
+      replaced = true;
+      energyReplacements += 1;
+      return replacer(match);
+    });
+    if (replaced) {
+      energyCount = countMatches(output, energyRegex);
+    }
+    return replaced;
+  };
+
+  while (energyCount > 10) {
+    let changed = false;
+    for (const entry of POST_FLIGHT_ENERGY_PATTERNS) {
+      const didChange = applyEnergyPattern(entry.pattern, entry.replace);
+      changed = changed || didChange;
+      if (energyCount <= 10) break;
+    }
+    if (energyCount <= 10) break;
+    if (!changed) {
+      const before = energyCount;
+      output = output.replace(energyRegex, (match) => {
+        if (energyCount <= 10) {
+          return match;
+        }
+        const synonym = POST_FLIGHT_ENERGY_SYNONYMS[synonymIndex % POST_FLIGHT_ENERGY_SYNONYMS.length];
+        synonymIndex += 1;
+        energyReplacements += 1;
+        const replacement = adjustCase(match, synonym);
+        return replacement;
+      });
+      energyCount = countMatches(output, energyRegex);
+      if (energyCount === before) {
+        break;
+      }
+    }
+  }
+
+  const finalEnergy = energyCount;
+
+  const initialSignatureMatches = collectSignatureMatches(output);
+  let signatureSoftened = 0;
+  let softRotationIndex = 0;
+  if (initialSignatureMatches.length > 3) {
+    let matches = initialSignatureMatches;
+    while (matches.length > 3) {
+      const target = matches[3];
+      const softVariant = POST_FLIGHT_SIGNATURE_SOFT[softRotationIndex % POST_FLIGHT_SIGNATURE_SOFT.length];
+      softRotationIndex += 1;
+      signatureSoftened += 1;
+      const softened = buildSoftenedSignature(target.text, softVariant);
+      output = `${output.slice(0, target.start)}${softened}${output.slice(target.end)}`;
+      matches = collectSignatureMatches(output);
+      if (softRotationIndex > 500) {
+        break;
+      }
+    }
+  }
+  const finalSignatureMatches = collectSignatureMatches(output);
+  const finalSignature = finalSignatureMatches.length;
+
+  const massNouns = new Set(['chaos', 'stress', 'business', 'news', 'progress', 'mess']);
+  let clausesNormalized = 0;
+  output = output.replace(/(^|[\n.!?]\s*)there (?:also\s+)?(?:just\s+)?(?:saying|warning|forcing|buzzing|trying|about|not|waiting|here|screaming|showing)\b/gi, (match, prefix, offset, full) => {
+    const matchStart = offset + prefix.length;
+    const remainder = full.slice(matchStart + match.length - prefix.length);
+    const nextWordMatch = remainder.match(/^(\s+)([A-Za-z]+)/);
+    let pronoun = "It's";
+    if (nextWordMatch) {
+      const nextWord = nextWordMatch[2];
+      const lower = nextWord.toLowerCase();
+      if (/s$/.test(lower) && !massNouns.has(lower)) {
+        pronoun = "They're";
+      }
+    }
+    clausesNormalized += 1;
+    const remainderOfMatch = match.slice(prefix.length + 'there'.length);
+    return `${prefix}${pronoun}${remainderOfMatch}`;
+  });
+
+  let fragmentsFixed = 0;
+  output = output.replace(/\bthere about\b/gi, (match) => {
+    fragmentsFixed += 1;
+    return adjustCase(match, "it's about");
+  });
+  output = output.replace(/\bthere a\b/gi, (match) => {
+    fragmentsFixed += 1;
+    return adjustCase(match, "there's a");
+  });
+  output = output.replace(/\bthere is\b/gi, (match) => {
+    fragmentsFixed += 1;
+    return adjustCase(match, "there's");
+  });
+  output = output.replace(/\bthere (trying|going|working|building|pushing|holding|calling|pressing|fighting|messing)\b/gi, (match, verb: string) => {
+    fragmentsFixed += 1;
+    return adjustCase(match, `they're ${verb}`);
+  });
+  output = output.replace(/\bthere not\b/gi, (match) => {
+    fragmentsFixed += 1;
+    return adjustCase(match, "they're not");
+  });
+  output = output.replace(/\bPart of there about\b/gi, () => {
+    fragmentsFixed += 1;
+    return 'Part of this is about';
+  });
+  output = output.replace(/\bthere\s+the\b/gi, (match) => {
+    fragmentsFixed += 1;
+    return adjustCase(match, "that's the");
+  });
+  output = output.replace(/\bthere like\b/gi, (match) => {
+    fragmentsFixed += 1;
+    return adjustCase(match, "it's like");
+  });
+  output = output.replace(/\bthere there\b/gi, (match) => {
+    fragmentsFixed += 1;
+    return adjustCase(match, "there's");
+  });
+
+  const pronounExclusions = new Set([
+    'are','were','was','is','will','would','could','should','has','have','had','be','being','been','because','since','if','when','while','where','why','what','who','how','that','this','these','those','and','or','but','so','than','then','for','to','from','with','without','into','onto','over','under','about','around','through','between','behind','ahead','by','off','on','in','out','up','down','back'
+  ]);
+  output = output.replace(/\bthere\s+([a-z]+)\b/gi, (match, word) => {
+    const lower = word.toLowerCase();
+    if (pronounExclusions.has(lower)) {
+      return match;
+    }
+    // Avoid double adjusting if we already handled specific patterns
+    fragmentsFixed += 1;
+    const plural = /s$/.test(lower) && !massNouns.has(lower);
+    const pronoun = plural ? "they're" : "there's";
+    const replacementPronoun = adjustCase(match, pronoun);
+    const replacementWord = adjustCase(word, word);
+    return `${replacementPronoun} ${replacementWord}`;
+  });
+
+  let nounCollapses = 0;
+  output = output.replace(/\b(influence|vibe|current|presence)\s+(energy|current|vibe|presence)\b/gi, (_m, _first, second) => {
+    nounCollapses += 1;
+    return second;
+  });
+  output = output.replace(/\b(a|the|that|this)\s+(that|this)\b/gi, (_m, _first, second) => {
+    nounCollapses += 1;
+    return second;
+  });
+  output = output.replace(/\bthat little this\b/gi, () => {
+    nounCollapses += 1;
+    return 'that little';
+  });
+  output = output.replace(/\breversed (energy|influence|current|presence)\b/gi, (match) => {
+    nounCollapses += 1;
+    return match[0] === match[0].toUpperCase() ? 'Reversed card' : 'reversed card';
+  });
+
+  const fragmentCheckRegex = /\bthere\s+(?:also\s+)?(?:just\s+)?(saying|warning|forcing|buzzing|trying|about|not|waiting|here|screaming|showing|a|the)\b/i;
+  const remainingFragments = fragmentCheckRegex.test(output);
+  if (remainingFragments) {
+    console.warn('[post-flight] WARN: residual "there" fragments detected after enforcement.');
+  }
+
+  console.log(
+    `[post-flight] energy ${initialEnergy}→${finalEnergy} (replacements=${energyReplacements}), signature ${initialSignatureMatches.length}→${finalSignature} (softened=${signatureSoftened}), fragmentsFixed=${fragmentsFixed}, clausesNormalized=${clausesNormalized}, nounCollapses=${nounCollapses}`
+  );
+
+  return {
+    text: output,
+    energyBefore: initialEnergy,
+    energyAfter: finalEnergy,
+    signatureBefore: initialSignatureMatches.length,
+    signatureAfter: finalSignature,
+    fragmentsFixed,
+    energyReplacements,
+    signatureSoftened,
+  };
+}
