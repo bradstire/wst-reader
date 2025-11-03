@@ -1,0 +1,13 @@
+sign,validator_hash,energy_before,energy_after,signature_before,signature_after,pass_order,timestamp,path
+Aries,af871599b2ecfad2230750512cb03a2805971a62,11,7,7,3,card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ,2025-11-03T07-13-57Z,output/FULL_READING__Aries__LOCK__2025-11-03T07-13-57Z.txt
+Taurus,af871599b2ecfad2230750512cb03a2805971a62,16,9,5,3,card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ,2025-11-03T07-16-46Z,output/FULL_READING__Taurus__LOCK__2025-11-03T07-16-46Z.txt
+Gemini,af871599b2ecfad2230750512cb03a2805971a62,23,7,9,3,card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ,2025-11-03T07-18-04Z,output/FULL_READING__Gemini__LOCK__2025-11-03T07-18-04Z.txt
+Cancer,af871599b2ecfad2230750512cb03a2805971a62,16,10,10,3,card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ,2025-11-03T07-19-35Z,output/FULL_READING__Cancer__LOCK__2025-11-03T07-19-35Z.txt
+Leo,af871599b2ecfad2230750512cb03a2805971a62,17,6,7,3,card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ,2025-11-03T07-20-46Z,output/FULL_READING__Leo__LOCK__2025-11-03T07-20-46Z.txt
+Virgo,af871599b2ecfad2230750512cb03a2805971a62,21,8,10,3,card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ,2025-11-03T07-22-01Z,output/FULL_READING__Virgo__LOCK__2025-11-03T07-22-01Z.txt
+Libra,af871599b2ecfad2230750512cb03a2805971a62,17,7,10,3,card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ,2025-11-03T07-23-06Z,output/FULL_READING__Libra__LOCK__2025-11-03T07-23-06Z.txt
+Scorpio,af871599b2ecfad2230750512cb03a2805971a62,19,9,9,3,card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ,2025-11-03T07-24-14Z,output/FULL_READING__Scorpio__LOCK__2025-11-03T07-24-14Z.txt
+Sagittarius,af871599b2ecfad2230750512cb03a2805971a62,15,9,12,3,card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ,2025-11-03T07-25-29Z,output/FULL_READING__Sagittarius__LOCK__2025-11-03T07-25-29Z.txt
+Capricorn,af871599b2ecfad2230750512cb03a2805971a62,22,0,10,3,card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ,2025-11-03T07-26-42Z,output/FULL_READING__Capricorn__LOCK__2025-11-03T07-26-42Z.txt
+Aquarius,af871599b2ecfad2230750512cb03a2805971a62,11,9,8,3,card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ,2025-11-03T07-27-49Z,output/FULL_READING__Aquarius__LOCK__2025-11-03T07-27-49Z.txt
+Pisces,af871599b2ecfad2230750512cb03a2805971a62,19,10,9,3,card>contextual>fragments>redundant>noun-collision>plural>synonyms>safeguards ,2025-11-03T07-28-53Z,output/FULL_READING__Pisces__LOCK__2025-11-03T07-28-53Z.txt
