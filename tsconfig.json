@@ -24,6 +24,10 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "archive",
+    "archive/**",
+    "**/*.snap.ts",
+    "**/*.archived.ts"
   ]
 }

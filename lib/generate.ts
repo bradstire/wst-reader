@@ -15,6 +15,15 @@ import { redactUnrevealedCards } from './validator';
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const EXPECTED_VALIDATOR_HASH = 'af871599b2ecfad2230750512cb03a2805971a62';
+const STACCATO_SAFE_MODE = process.env.STACCATO_SAFE_MODE === '1';
+const QUESTIONS_THROTTLE_FACTOR = (() => {
+  const raw = process.env.QUESTIONS_THROTTLE_FACTOR;
+  if (raw === undefined || raw === null || raw === '') {
+    return 1;
+  }
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
+})();
 
 function collectLinesWithPattern(text: string, pattern: RegExp): string[] {
   const lines = text.split('\n');
@@ -78,7 +87,7 @@ const POST_FLIGHT_ENERGY_PATTERNS: Array<{
 
 const POST_FLIGHT_ENERGY_SYNONYMS = ['current', 'vibe', 'presence', 'pull', 'shift', 'undertone', 'tone', 'force', 'moment', 'card'];
 
-const POST_FLIGHT_SIGNATURE_PATTERN = /\b(You knew[^.!?\n]{0,50}(?:before you said it|this already|that already)|Don['’]t lie to yourself)/gi;
+const POST_FLIGHT_SIGNATURE_PATTERN = /\b(You knew[^.!?\n]{0,50}(?:before you said it|this already|that already)|Don[''']t lie to yourself)/gi;
 
 const POST_FLIGHT_SIGNATURE_SOFT = ['You sensed this', 'You felt this already', 'You already clocked this', 'You knew it deep down'];
 
@@ -118,6 +127,63 @@ function adjustCase(original: string, replacement: string): string {
   return replacement;
 }
 
+function capitalizeFirst(text: string): string {
+  if (!text.length) return text;
+  return text[0].toUpperCase() + text.slice(1);
+}
+
+function isInsideTag(source: string, index: number): boolean {
+  const lastOpen = source.lastIndexOf('<', index);
+  const lastClose = source.lastIndexOf('>', index);
+  if (lastOpen === -1) return false;
+  if (lastClose === -1) return true;
+  return lastOpen > lastClose;
+}
+
+function isCtaParagraph(paragraph: string): boolean {
+  const lowered = paragraph.toLowerCase();
+  return lowered.includes('please like') || lowered.includes("i'll see y'all soon") || lowered.includes('you already know what to do');
+}
+
+function collapseEllipses(text: string): string {
+  return text
+    .replace(/…{2,}/g, '…')
+    .replace(/\.{4,}/g, '…')
+    .replace(/\.{3}/g, '…')
+    .replace(/…\.+/g, '…');
+}
+
+const MASS_NOUNS = new Set(['chaos', 'stress', 'business', 'news', 'progress', 'mess']);
+const THERE_PRONOUN_EXCLUSIONS = new Set([
+  'are','were','was','is','will','would','could','should','has','have','had','be','being','been','because','since','if','when','while','where','why','what','who','how','that','this','these','those','and','or','but','so','than','then','for','to','from','with','without','into','onto','over','under','about','around','through','between','behind','ahead','by','off','on','in','out','up','down','back'
+]);
+
+function enforceThereFragmentsPass(text: string): { text: string; fragmentsFixed: number; clausesNormalized: number } {
+  let output = text;
+  let fragmentsFixed = 0;
+  let clausesNormalized = 0;
+  output = output.replace(/(^|[\n.!?]\s*)there (?:also\s+)?(?:just\s+)?(?:saying|warning|forcing|buzzing|trying|about|not|waiting|here|screaming|showing)\b/gi, (match, prefix) => {
+    const base = match.slice((prefix as string).length, (prefix as string).length + 'there'.length);
+    const pronoun = adjustCase(base, "it's");
+    const remainder = match.slice((prefix as string).length + 'there'.length);
+    clausesNormalized += 1;
+    return `${prefix as string}${pronoun}${remainder}`;
+  });
+  output = output.replace(/\bthere\s+([a-z]+)\b/gi, (match, word) => {
+    const lower = word.toLowerCase();
+    if (THERE_PRONOUN_EXCLUSIONS.has(lower)) {
+      return match;
+    }
+    fragmentsFixed += 1;
+    const plural = /s$/.test(lower) && !MASS_NOUNS.has(lower);
+    const pronoun = plural ? "they're" : "there's";
+    const replacementPronoun = adjustCase(match, pronoun);
+    const replacementWord = adjustCase(word, word);
+    return `${replacementPronoun} ${replacementWord}`;
+  });
+  return { text: output, fragmentsFixed, clausesNormalized };
+}
+
 const MINOR_RANKS = [
   'Ace','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Page','Knight','Queen','King'
 ];
@@ -135,12 +201,14 @@ const CARD_NAME_REGEX = new RegExp(
   'gi'
 );
 
-const QUESTION_TEMPLATES = [
-  'Is this really yours to carry?',
-  "What's the lesson?",
-  "Where's the boundary?",
-  'What would honesty change here?',
-  'What happens if you stop performing?'
+const PIVOT_REACTIONS = ["Okay,", "Wait,", "Mm.", "Sheesh.", "Look—"];
+
+const RITUAL_Q = [
+  'What shifts when you sit with that?',
+  'Where does this land in you?',
+  'What does this ask of you now?',
+  'How does this sit?',
+  'What would honesty change here?'
 ];
 
 const LETS_TEMPLATES = [
@@ -167,12 +235,12 @@ const AIR_LONG_BEATS = [
 const AIR_CONNECTIVES = ['frankly', 'honestly', 'quietly', 'right now'];
 
 const PERFORMABLE_OPENERS = [
-  "Okay… so here’s what I’m seeing.",
-  "Let’s not pretend you didn’t feel that.",
+  "Okay… so here's what I'm seeing.",
+  "Let's not pretend you didn't feel that.",
   "Be honest—what changed after that call?"
 ];
 
-const REVEAL_PAIR_SENTENCE = "Here’s the part you don’t want to say… You knew before you said it.";
+const REVEAL_PAIR_SENTENCE = "Here's the part you don't want to say… You knew before you said it.";
 
 const TAROT_ARC_QUESTIONS = [
   'What did this teach you?',
@@ -234,6 +302,8 @@ type PostFlightMetrics = {
   longLineFixes: number;
   airModWindows: number;
   anchorBeatsApplied: number;
+  bannersRemoved: number;
+  punctFixes: number;
 };
 
 export function enforcePostFlight(text: string, sign?: string): PostFlightMetrics {
@@ -343,79 +413,10 @@ export function enforcePostFlight(text: string, sign?: string): PostFlightMetric
   let finalSignatureMatches = collectSignatureMatches(output);
   let finalSignature = finalSignatureMatches.length;
 
-  const massNouns = new Set(['chaos', 'stress', 'business', 'news', 'progress', 'mess']);
-  let clausesNormalized = 0;
-  output = output.replace(/(^|[\n.!?]\s*)there (?:also\s+)?(?:just\s+)?(?:saying|warning|forcing|buzzing|trying|about|not|waiting|here|screaming|showing)\b/gi, (match, prefix, offset, full) => {
-    const matchStart = offset + prefix.length;
-    const remainder = full.slice(matchStart + match.length - prefix.length);
-    const nextWordMatch = remainder.match(/^(\s+)([A-Za-z]+)/);
-    let pronoun = "It's";
-    if (nextWordMatch) {
-      const nextWord = nextWordMatch[2];
-      const lower = nextWord.toLowerCase();
-      if (/s$/.test(lower) && !massNouns.has(lower)) {
-        pronoun = "They're";
-      }
-    }
-    clausesNormalized += 1;
-    const remainderOfMatch = match.slice(prefix.length + 'there'.length);
-    return `${prefix}${pronoun}${remainderOfMatch}`;
-  });
-
-  let fragmentsFixed = 0;
-  output = output.replace(/\bthere about\b/gi, (match) => {
-    fragmentsFixed += 1;
-    return adjustCase(match, "it's about");
-  });
-  output = output.replace(/\bthere a\b/gi, (match) => {
-    fragmentsFixed += 1;
-    return adjustCase(match, "there's a");
-  });
-  output = output.replace(/\bthere is\b/gi, (match) => {
-    fragmentsFixed += 1;
-    return adjustCase(match, "there's");
-  });
-  output = output.replace(/\bthere (trying|going|working|building|pushing|holding|calling|pressing|fighting|messing)\b/gi, (match, verb: string) => {
-    fragmentsFixed += 1;
-    return adjustCase(match, `they're ${verb}`);
-  });
-  output = output.replace(/\bthere not\b/gi, (match) => {
-    fragmentsFixed += 1;
-    return adjustCase(match, "they're not");
-  });
-  output = output.replace(/\bPart of there about\b/gi, () => {
-    fragmentsFixed += 1;
-    return 'Part of this is about';
-  });
-  output = output.replace(/\bthere\s+the\b/gi, (match) => {
-    fragmentsFixed += 1;
-    return adjustCase(match, "that's the");
-  });
-  output = output.replace(/\bthere like\b/gi, (match) => {
-    fragmentsFixed += 1;
-    return adjustCase(match, "it's like");
-  });
-  output = output.replace(/\bthere there\b/gi, (match) => {
-    fragmentsFixed += 1;
-    return adjustCase(match, "there's");
-  });
-
-  const pronounExclusions = new Set([
-    'are','were','was','is','will','would','could','should','has','have','had','be','being','been','because','since','if','when','while','where','why','what','who','how','that','this','these','those','and','or','but','so','than','then','for','to','from','with','without','into','onto','over','under','about','around','through','between','behind','ahead','by','off','on','in','out','up','down','back'
-  ]);
-  output = output.replace(/\bthere\s+([a-z]+)\b/gi, (match, word) => {
-    const lower = word.toLowerCase();
-    if (pronounExclusions.has(lower)) {
-      return match;
-    }
-    // Avoid double adjusting if we already handled specific patterns
-    fragmentsFixed += 1;
-    const plural = /s$/.test(lower) && !massNouns.has(lower);
-    const pronoun = plural ? "they're" : "there's";
-    const replacementPronoun = adjustCase(match, pronoun);
-    const replacementWord = adjustCase(word, word);
-    return `${replacementPronoun} ${replacementWord}`;
-  });
+  const fragmentPassInitial = enforceThereFragmentsPass(output);
+  output = fragmentPassInitial.text;
+  let fragmentsFixed = fragmentPassInitial.fragmentsFixed;
+  let clausesNormalized = fragmentPassInitial.clausesNormalized;
 
   let nounCollapses = 0;
   output = output.replace(/\b(influence|vibe|current|presence)\s+(energy|current|vibe|presence)\b/gi, (_m, _first, second) => {
@@ -480,15 +481,66 @@ export function enforcePostFlight(text: string, sign?: string): PostFlightMetric
   const isAirSign = ['gemini', 'libra', 'aquarius'].includes(lowerSign);
   const isWaterAnchorSign = ['scorpio', 'pisces'].includes(lowerSign);
   const isCapricorn = lowerSign === 'capricorn';
+  const isFireSign = ['aries', 'leo', 'sagittarius'].includes(lowerSign);
+  const isWaterSign = ['cancer', 'scorpio', 'pisces'].includes(lowerSign);
+  const isEarthSign = ['taurus', 'virgo', 'capricorn'].includes(lowerSign);
+
+  const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+  const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const questionUsage = new Map<string, number>();
+  const ritualRotation = { value: 0 };
+  let lastRitualQuestionUsed: string | null = null;
+  let pivotReactionPointer = 0;
+  let lastPivotReaction = '';
+  let pivotReactionRotations = 0;
+  const pickPivotReaction = () => {
+    for (let attempt = 0; attempt < PIVOT_REACTIONS.length; attempt += 1) {
+      const candidate = PIVOT_REACTIONS[pivotReactionPointer % PIVOT_REACTIONS.length];
+      pivotReactionPointer += 1;
+      if (candidate !== lastPivotReaction) {
+        lastPivotReaction = candidate;
+        pivotReactionRotations += 1;
+        return candidate;
+      }
+    }
+    const fallback = PIVOT_REACTIONS[0];
+    lastPivotReaction = fallback;
+    pivotReactionRotations += 1;
+    return fallback;
+  };
+  const pickRitualQuestion = (wordOffset: number): string => {
+    const length = RITUAL_Q.length;
+    for (let attempt = 0; attempt < length * 2; attempt += 1) {
+      const idx = (ritualRotation.value + attempt) % length;
+      const candidate = RITUAL_Q[idx];
+      const lastUse = questionUsage.get(candidate) ?? -Infinity;
+      if (candidate === lastRitualQuestionUsed) continue;
+      if (wordOffset - lastUse < 120) continue;
+      ritualRotation.value = idx + 1;
+      questionUsage.set(candidate, wordOffset);
+      lastRitualQuestionUsed = candidate;
+      return candidate;
+    }
+    const fallback = RITUAL_Q[ritualRotation.value % length];
+    ritualRotation.value = ritualRotation.value + 1;
+    questionUsage.set(fallback, wordOffset);
+    lastRitualQuestionUsed = fallback;
+    return fallback;
+  };
+  const injectedQuestionRecords: { question: string; priority: number }[] = [];
+  let questionsAllowed = 0;
+  let questionsInjected = 0;
+  let questionSlotsRemaining = 0;
+  const updatedWordCount = Math.max(countWords(output), 1);
 
   // (#6) Explicit card-name pivots
-  const cardReframeOptions = [
-    'What shifts when you sit with that?',
-    'Where does it land in you?',
-    'What does that ask of you now?'
-  ];
-  const cardReframeRotation = { value: 0 };
   const cardParagraphs = splitIntoParagraphs(output);
+  const cardParagraphWordOffsets = cardParagraphs.map(() => 0);
+  let cumulativeCardWords = 0;
+  for (let i = 0; i < cardParagraphs.length; i += 1) {
+    cardParagraphWordOffsets[i] = cumulativeCardWords;
+    cumulativeCardWords += countWords(cardParagraphs[i]);
+  }
   const enforcedCards = new Set<string>();
   for (let i = 0; i < cardParagraphs.length; i += 1) {
     const paragraph = cardParagraphs[i];
@@ -510,15 +562,20 @@ export function enforcePostFlight(text: string, sign?: string): PostFlightMetric
     }
     const display = firstMatch.toLowerCase().includes('reversed') ? `${normalized} reversed` : normalized;
     const header = display.toLowerCase().startsWith('the ') ? display : `The ${display}`;
-    const declarative = ensureTrailingPunctuation(`${header} is here showing you what this moment is about.`);
-    const reframe = pickRotating(cardReframeOptions, cardReframeRotation);
+    const reaction = pickPivotReaction();
+    const spacer = reaction.endsWith('—') ? '' : ' ';
+    const wordOffset = cardParagraphWordOffsets[i];
+    const reframe = pickRitualQuestion(wordOffset);
+    const declarative = ensureTrailingPunctuation(`${reaction}${spacer}${header} is here showing you what this moment is about.`.replace(/\s+/g, ' ').trim());
     cardParagraphs[i] = `${declarative} ${reframe}\n${paragraph}`;
+    questionsInjected += 1;
+    injectedQuestionRecords.push({ question: reframe, priority: 0 });
     enforcedCards.add(normalizedKey);
   }
   output = joinParagraphs(cardParagraphs);
 
   // (#1) Ellipses as breath markers
-  let ellipsesCount = countMatches(output, /\.\.\./g);
+  let ellipsesCount = countMatches(output, /…/g);
   const baseWordCount = Math.max(countWords(output), 1);
   const scaledPerK = Math.max(baseWordCount / 1000, 0.2);
   const minEllipses = Math.max(1, Math.round(5 * scaledPerK));
@@ -531,6 +588,9 @@ export function enforcePostFlight(text: string, sign?: string): PostFlightMetric
     output = output.replace(local, (...args) => {
       if (ellipsesNeeded <= 0) return args[0] as string;
       const current = args[0] as string;
+      const str = args[args.length - 1] as string;
+      const offset = (args[args.length - 2] as number) || 0;
+      if (isInsideTag(str, offset)) return current;
       if (current.includes('…')) return current;
       const next = handler(...args);
       if (next === current) return current;
@@ -542,19 +602,26 @@ export function enforcePostFlight(text: string, sign?: string): PostFlightMetric
   if (ellipsesNeeded > 0) {
     applyEllipsisPass(/(^|[.!?])(\s*)(But|And|So|Okay|Look)\b/gm, (_match, punct = '', spaces = '', word: string) => {
       const gap = spaces || '';
-      return `${punct}${gap}… ${word}`;
+      const cleanedPunct = punct.endsWith('…') ? punct : punct.replace(/\.+$/, '.');
+      const adjustedWord = capitalizeFirst(word);
+      return `${cleanedPunct}${gap}… ${adjustedWord}`;
     });
   }
   if (ellipsesNeeded > 0) {
     applyEllipsisPass(/(^|[.!?])(\s*)(I|You|We)\s+(admit|pretend|feel|know)\b/gi, (_match, punct = '', spaces = '', subject: string, verb: string) => {
       const gap = spaces || '';
-      return `${punct}${gap}… ${subject} ${verb}`;
+      const cleanedPunct = punct.endsWith('…') ? punct : punct.replace(/\.+$/, '.');
+      return `${cleanedPunct}${gap}… ${capitalizeFirst(subject)} ${verb}`;
     });
   }
   if (ellipsesNeeded > 0) {
-    applyEllipsisPass(/(You knew before you said it)/g, () => '… You knew before you said it');
+    applyEllipsisPass(/(You knew before you said it)/g, (_match, _group, offset: number, str: string) => {
+      if (isInsideTag(str, offset)) return _match;
+      return '… You knew before you said it';
+    });
   }
-  ellipsesCount = countMatches(output, /\.\.\./g);
+  output = collapseEllipses(output);
+  ellipsesCount = countMatches(output, /…/g);
 
   // (#8) Reflective pivots
   let reflectiveTransforms = 0;
@@ -565,53 +632,191 @@ export function enforcePostFlight(text: string, sign?: string): PostFlightMetric
   });
 
   // (#2) Interrogative density
+  const bodyWords = Math.max(countWords(output), 1);
+  let baseTargetPerK = 7;
+  if (isAirSign) baseTargetPerK = 8;
+  else if (isFireSign) baseTargetPerK = 7;
+  else if (isWaterSign) baseTargetPerK = 7;
+  else if (isEarthSign) baseTargetPerK = 6;
+  if (isCapricorn) baseTargetPerK = 6;
+  let questionTarget = clamp(Math.round((bodyWords / 1000) * baseTargetPerK), 4, 10);
+  const throttle = QUESTIONS_THROTTLE_FACTOR || 0.75;
+  questionTarget = clamp(Math.round(questionTarget * throttle), 4, 10);
+  questionTarget = clamp(questionTarget, 4, 10);
+  questionsAllowed = questionTarget;
+  const minWordsBetweenQuestions = isAirSign ? 100 : isFireSign ? 120 : isWaterSign ? 140 : isCapricorn ? 180 : 160;
+
   let questionCount = countMatches(output, /\?/g);
-  const updatedWordCount = Math.max(countWords(output), 1);
-  const updatedPerK = Math.max(updatedWordCount / 1000, 0.2);
-  const minQuestions = Math.max(1, Math.round(5 * updatedPerK));
-  const maxQuestions = Math.max(minQuestions, Math.round(8 * updatedPerK));
-  const targetQuestions = Math.max(minQuestions, Math.min(Math.round(7 * updatedPerK), maxQuestions));
-  let questionsNeeded = Math.max(0, Math.min(targetQuestions, maxQuestions) - questionCount);
-  const questionRotation = { value: 0 };
-  let paragraphsForQuestions = splitIntoParagraphs(output);
-  const paragraphsWithQuestions = new Set<number>();
-  for (let i = 0; i < paragraphsForQuestions.length && questionsNeeded > 0; i += 1) {
-    const paragraph = paragraphsForQuestions[i];
-    if (!paragraph.trim()) continue;
-    if ((paragraph.match(/\?/g) || []).length > 0) {
-      paragraphsWithQuestions.add(i);
-      continue;
+  const paragraphsForQuestions = splitIntoParagraphs(output);
+  const paragraphWordOffsets = paragraphsForQuestions.reduce<number[]>((acc, paragraph, index) => {
+    const previous = index === 0 ? 0 : acc[index - 1];
+    acc.push(previous + countWords(paragraph));
+    return acc;
+  }, []);
+  const paragraphHasQuestion = paragraphsForQuestions.map((paragraph) => (paragraph.match(/\?/g) || []).length);
+
+  const arcQuestions = new Set<string>();
+  TAROT_ARC_QUESTIONS.forEach((question) => {
+    if (output.includes(question)) {
+      arcQuestions.add(question.trim());
     }
-    const hook = pickRotating(QUESTION_TEMPLATES, questionRotation);
-    paragraphsForQuestions[i] = `${ensureTrailingPunctuation(paragraph.trim())} ${hook}`;
-    questionCount += 1;
-    questionsNeeded -= 1;
-    paragraphsWithQuestions.add(i);
-  }
-  if (questionsNeeded > 0) {
-    for (let i = 0; i < paragraphsForQuestions.length && questionsNeeded > 0; i += 1) {
-      if (paragraphsWithQuestions.has(i)) continue;
-      const hook = pickRotating(QUESTION_TEMPLATES, questionRotation);
-      paragraphsForQuestions.splice(i + 1, 0, hook);
-      questionCount += 1;
-      questionsNeeded -= 1;
-      i += 1;
+  });
+
+  const paragraphQuestionPriority: Array<'reserve_arc' | 'reserve_unique' | 'candidate'> = [];
+  const questionOccurrences: Array<{ paragraphIndex: number; text: string; offset: number; priority: number }> = [];
+
+  paragraphsForQuestions.forEach((paragraph, index) => {
+    const matches = paragraph.match(/[^?]+\?/g);
+    if (!matches) {
+      paragraphQuestionPriority[index] = 'candidate';
+      return;
+    }
+    const trimmedMatches = matches.map((question) => question.trim());
+    const prioritized: Array<{ question: string; priority: number }> = trimmedMatches.map((question) => {
+      if (arcQuestions.has(question)) return { question, priority: 0 };
+      const trimmed = question.replace(/^[^A-Za-z]+/, '').replace(/\s+/g, ' ').trim();
+      const isRitual = RITUAL_Q.some((entry) => entry === trimmed);
+      const isUnique = trimmedMatches.length === 1 && isRitual;
+      if (isUnique) return { question, priority: 1 };
+      return { question, priority: 2 };
+    });
+    const highestPriority = Math.min(...prioritized.map((item) => item.priority));
+    if (highestPriority === 0) paragraphQuestionPriority[index] = 'reserve_arc';
+    else if (highestPriority === 1) paragraphQuestionPriority[index] = 'reserve_unique';
+    else paragraphQuestionPriority[index] = 'candidate';
+
+    let cumulativeOffset = paragraphWordOffsets[index] - countWords(paragraph);
+    prioritized.forEach((item) => {
+      cumulativeOffset += countWords(item.question);
+      questionOccurrences.push({
+        paragraphIndex: index,
+        text: item.question,
+        offset: cumulativeOffset,
+        priority: item.priority,
+      });
+    });
+  });
+
+  const cooldownViolations = new Set<number>();
+  questionOccurrences.sort((a, b) => a.offset - b.offset);
+  for (let i = 1; i < questionOccurrences.length; i += 1) {
+    const previous = questionOccurrences[i - 1];
+    const current = questionOccurrences[i];
+    if (current.offset - previous.offset < minWordsBetweenQuestions) {
+      cooldownViolations.add(i);
     }
   }
+
+  const questionTrimRecords: Array<{ paragraphIndex: number; text: string; replacement: string; priority: number }> = [];
+  questionOccurrences.forEach((occurrence, index) => {
+    const { paragraphIndex, text, priority } = occurrence;
+    const paragraphPriority = paragraphQuestionPriority[paragraphIndex];
+    if (paragraphPriority === 'reserve_arc' && arcQuestions.has(text)) return;
+    if (paragraphPriority === 'reserve_unique' && priority <= 1) return;
+    if (paragraphHasQuestion[paragraphIndex] > 1 && priority >= 2) {
+      questionTrimRecords.push({ paragraphIndex, text, replacement: text.replace(/\?$/, '.').replace(/^What\b/i, 'Notice'), priority: priority + 1 });
+      return;
+    }
+    if (cooldownViolations.has(index) && priority >= 2) {
+      questionTrimRecords.push({ paragraphIndex, text, replacement: text.replace(/\?$/, '.').replace(/^What\b/i, 'Notice'), priority: priority + 2 });
+      return;
+    }
+    questionTrimRecords.push({ paragraphIndex, text, replacement: text.replace(/\?$/, '.').replace(/^What\b/i, 'Notice'), priority });
+  });
+
+  questionTrimRecords.sort((a, b) => a.priority - b.priority);
+
+  questionCount = countMatches(output, /\?/g);
+  questionsInjected = questionOccurrences.length;
+  let questionsTrimmed = 0;
+
+  const keepers = new Set<string>();
+  paragraphsForQuestions.forEach((paragraph, index) => {
+    const matches = paragraph.match(/[^?]+\?/g);
+    if (!matches || matches.length !== 1) return;
+    const question = matches[0].trim();
+    if (paragraphQuestionPriority[index] !== 'candidate') {
+      keepers.add(question);
+    }
+  });
+
+  let remainingQuestions = questionCount;
+  questionsTrimmed = 0;
+  for (const record of questionTrimRecords) {
+    if (remainingQuestions <= questionTarget) break;
+    if (record.priority <= 1) continue;
+    if (keepers.has(record.text)) continue;
+    const paragraph = paragraphsForQuestions[record.paragraphIndex];
+    if (!paragraph.includes(record.text)) continue;
+    const replacementBase = record.replacement.replace(/\?$/, '').trim();
+    const replacement = replacementBase ? `${replacementBase.charAt(0).toUpperCase()}${replacementBase.slice(1)}.` : '';
+    paragraphsForQuestions[record.paragraphIndex] = paragraph.replace(record.text, replacement);
+    keepers.add(replacement);
+    remainingQuestions -= 1;
+    questionsTrimmed += 1;
+  }
+
   output = joinParagraphs(paragraphsForQuestions);
+  questionCount = countMatches(output, /\?/g);
+  questionsInjected = Math.min(questionOccurrences.length, questionTarget);
 
   // (#3, #12) De-exclaim and closure softening
-  output = output
-    .replace(/You already know what to do!/gi, 'You already know what to do… right?')
-    .replace(/That’s all I’ve got for now!/gi, "That's all for now… take it in.")
-    .replace(/That's all I've got for now!/gi, "That's all for now… take it in.")
-    .replace(/Please like, subscribe, tell your group chat!/gi, 'Please like, subscribe, tell your group chat.')
-    .replace(/I’ll see y’all soon!/gi, "I'll see y'all soon.")
-    .replace(/I'll see y'all soon!/gi, "I'll see y'all soon.");
-  output = output.replace(/!([ \n]|$)/g, '.$1');
-  if (output.endsWith('!')) {
-    output = `${output.slice(0, -1)}.`;
+  const allowToneDown = process.env.ALLOW_CTA_TONE_DOWN !== 'false';
+  const linesForExclaim = output.split('\n');
+  let ctaExclaimFixes = 0;
+  for (let i = 0; i < linesForExclaim.length; i += 1) {
+    let line = linesForExclaim[i];
+    if (!line.includes('!')) continue;
+    const lowered = line.toLowerCase();
+    const isCta = lowered.includes('please like') || lowered.includes("i'll see y'all soon") || lowered.includes('you already know what to do') || lowered.includes('if this hit');
+    if (lowered.includes('you already know what to do!') && allowToneDown) {
+      const matches = line.match(/You already know what to do!/gi);
+      if (matches) ctaExclaimFixes += matches.length;
+      line = line.replace(/You already know what to do!/gi, 'You already know what to do… right?');
+    }
+    if (lowered.includes("that's all i've got for now!")) {
+      const matchesSmart = line.match(/That's all I've got for now!/gi);
+      if (matchesSmart) ctaExclaimFixes += matchesSmart.length;
+      const matchesAscii = line.match(/That's all I've got for now!/gi);
+      if (matchesAscii) ctaExclaimFixes += matchesAscii.length;
+      line = line.replace(/That's all I've got for now!/gi, "That's all for now… take it in.").replace(/That's all I've got for now!/gi, "That's all for now… take it in.");
+    }
+    if (isCta) {
+      if (allowToneDown) {
+        const hitMatches = line.match(/If this hit!…/gi);
+        if (hitMatches) ctaExclaimFixes += hitMatches.length;
+        line = line.replace(/If this hit!…/gi, 'If this hit…');
+        const groupMatches = line.match(/tell your group chat!/gi);
+        if (groupMatches) ctaExclaimFixes += groupMatches.length;
+        line = line.replace(/tell your group chat!/gi, 'tell your group chat… right?');
+        const pleaseMatches = line.match(/Please like, subscribe, tell your group chat!/gi);
+        if (pleaseMatches) ctaExclaimFixes += pleaseMatches.length;
+        line = line.replace(/Please like, subscribe, tell your group chat!/gi, 'Please like, subscribe, tell your group chat… right?');
+        const seeMatches = line.match(/I'll see y'all soon!/gi);
+        if (seeMatches) ctaExclaimFixes += seeMatches.length;
+        const seeAsciiMatches = line.match(/I'll see y'all soon!/gi);
+        if (seeAsciiMatches) ctaExclaimFixes += seeAsciiMatches.length;
+        line = line.replace(/I'll see y'all soon!/gi, "I'll see y'all soon.").replace(/I'll see y'all soon!/gi, "I'll see y'all soon.");
+      }
+      const trailMatches = line.match(/!…/g);
+      if (trailMatches) ctaExclaimFixes += trailMatches.length;
+      line = line.replace(/!…/g, '… right?…');
+      linesForExclaim[i] = line;
+      continue;
+    }
+    const encouragementRegex = /(you can|you deserve|keep|stay|breathe|take|remember|please|let[''']s|you already|we can|trust|lean|believe)/i;
+    const warningRegex = /(don't|stop|never|warning|avoid|danger)/i;
+    if (encouragementRegex.test(line) && !warningRegex.test(line)) {
+      line = line.replace(/!+/g, '… right?');
+    } else {
+      line = line.replace(/!+/g, '.');
+    }
+    const trailMatches = line.match(/!…/g);
+    if (trailMatches) ctaExclaimFixes += trailMatches.length;
+    line = line.replace(/!…/g, '… right?…');
+    linesForExclaim[i] = line;
   }
+  output = linesForExclaim.join('\n');
 
   // (#16) Performable opener enforcement
   const openerLines = output.split('\n');
@@ -630,8 +835,8 @@ export function enforcePostFlight(text: string, sign?: string): PostFlightMetric
   }
   output = openerLines.join('\n');
 
-  // (#4) Inclusive “let’s” invitations
-  let letsCount = countMatches(output, /\bLet’s\b/gi);
+  // (#4) Inclusive "let's" invitations
+  let letsCount = countMatches(output, /\bLet[''']s\b/gi);
   const letsTargetBase = Math.round(Math.max(updatedWordCount / 1000, 0.75) * 4);
   const letsTarget = Math.max(3, Math.min(5, letsTargetBase));
   if (letsCount < letsTarget) {
@@ -645,19 +850,18 @@ export function enforcePostFlight(text: string, sign?: string): PostFlightMetric
       if (!reflectiveRegex.test(paragraph)) continue;
       if (Math.abs(i - lastInsertedIndex) <= 1) continue;
       const prompt = pickRotating(LETS_TEMPLATES, letsRotation);
-      paragraphsForLets.splice(i + 1, 0, prompt);
+      paragraphsForLets[i] = `${ensureTrailingPunctuation(paragraph.trim())} ${prompt}`;
       letsCount += 1;
-      lastInsertedIndex = i + 1;
-      i += 1;
+      lastInsertedIndex = i;
     }
     let idx = 0;
     while (letsCount < 3 && idx < paragraphsForLets.length) {
-      if (Math.abs(idx - lastInsertedIndex) > 1) {
+      const paragraph = paragraphsForLets[idx];
+      if (paragraph && Math.abs(idx - lastInsertedIndex) > 1) {
         const prompt = pickRotating(LETS_TEMPLATES, letsRotation);
-        paragraphsForLets.splice(idx, 0, prompt);
+        paragraphsForLets[idx] = `${ensureTrailingPunctuation(paragraph.trim())} ${prompt}`;
         letsCount += 1;
         lastInsertedIndex = idx;
-        idx += 1;
       }
       idx += 1;
     }
@@ -682,51 +886,329 @@ export function enforcePostFlight(text: string, sign?: string): PostFlightMetric
   }
   output = joinParagraphs(paragraphsForFillers);
 
-  // (#5) Staccato share adjustments (with #10 prep)
-  let anchorBeatsApplied = 0;
+  // (#5) Staccato rebalancer
   let linesForStaccato = output.split('\n');
   let staccatoShare = computeStaccatoShare(linesForStaccato);
-  const staccatoMin = isCapricorn ? 0.15 : 0.20;
-  const staccatoMax = isCapricorn ? 0.20 : 0.25;
-  const splitForStaccato = (line: string): [string, string] | null => {
-    const words = line.trim().split(/\s+/).filter(Boolean);
-    if (words.length <= 6) return null;
-    const splitIndex = Math.min(6, Math.max(4, Math.floor(words.length / 2)));
-    const first = words.slice(0, splitIndex).join(' ').trim();
-    const second = words.slice(splitIndex).join(' ').trim();
-    if (!first || !second) return null;
-    return [ensureTrailingPunctuation(first), ensureTrailingPunctuation(second)];
+  const staccatoBefore = staccatoShare;
+  const staccatoTargetMax = isAirSign ? 0.25 : isEarthSign ? 0.18 : (isFireSign || isWaterSign) ? 0.23 : 0.20;
+  let mergesApplied = 0;
+  let fillerClustersTrimmed = 0;
+  let standaloneMerged = 0;
+  let windowsAdjusted = 0;
+  let airShortBeatsInlined = 0;
+
+  const normalizeWhitespace = (text: string) => text.replace(/\s+/g, ' ').trim();
+  const cleanupMerge = (text: string) => text.replace(/\s+([,;:.!?])/g, '$1').replace(/\s+—/g, ' —').replace(/—\s+/g, ' — ');
+  const isProtectedLine = (line: string): boolean => {
+    const trimmed = line.trim();
+    if (!trimmed) return false;
+    const lowered = trimmed.toLowerCase();
+    if (trimmed.startsWith('The ') && trimmed.includes('is here showing you what this moment is about.')) return true;
+    if (trimmed === REVEAL_PAIR_SENTENCE.trim() || trimmed.startsWith("Here's the part you don't want to say…")) return true;
+    if (TAROT_ARC_QUESTIONS.some((question) => question === trimmed)) return true;
+    if (lowered.includes('please like') || lowered.includes("i'll see y'all soon") || lowered.includes('if this hit') || lowered.includes('you already know what to do') || lowered.includes("that's all for now")) return true;
+    return false;
   };
-  let staccatoPasses = 0;
-  while (staccatoShare < staccatoMin && staccatoShare < staccatoMax) {
-    let changed = false;
-    for (let i = 0; i < linesForStaccato.length && staccatoShare < staccatoMin; i += 1) {
-      const line = linesForStaccato[i];
-      if (countWords(line) <= 12) continue;
-      const split = splitForStaccato(line);
-      if (!split) continue;
-      linesForStaccato.splice(i, 1, split[0], split[1]);
-      changed = true;
-      break;
+
+  const mergeIntoNext = (index: number, connector = ' — '): boolean => {
+    if (index < 0 || index >= linesForStaccato.length - 1) return false;
+    const current = linesForStaccato[index];
+    const next = linesForStaccato[index + 1];
+    if (isProtectedLine(current) || isProtectedLine(next)) return false;
+    const left = normalizeWhitespace(current).replace(/[—-]\s*$/, '').trim();
+    const right = normalizeWhitespace(next);
+    if (!left || !right) return false;
+    let merged = `${left}${connector}${right}`;
+    merged = cleanupMerge(merged);
+    linesForStaccato[index] = merged;
+    linesForStaccato.splice(index + 1, 1);
+    mergesApplied += 1;
+    return true;
+  };
+
+  const mergeIntoPrevious = (index: number, connector = ' — '): boolean => {
+    if (index <= 0 || index >= linesForStaccato.length) return false;
+    const prevLine = linesForStaccato[index - 1];
+    const current = linesForStaccato[index];
+    if (isProtectedLine(prevLine) || isProtectedLine(current)) return false;
+    const left = normalizeWhitespace(prevLine).replace(/[—-]\s*$/, '').trim();
+    const right = normalizeWhitespace(current);
+    if (!left || !right) return false;
+    let merged = `${left}${connector}${right}`;
+    merged = cleanupMerge(merged);
+    linesForStaccato[index - 1] = merged;
+    linesForStaccato.splice(index, 1);
+    mergesApplied += 1;
+    return true;
+  };
+
+  const STANDALONE_SHORT_RX = /^(Okay|So|Look|Wait|Uh|Mm|Yeah|Anyway)([,.… —])*$/i;
+  const toTokenCount = (line: string) => {
+    const trimmed = line.trim();
+    return trimmed ? trimmed.split(/\s+/).length : 0;
+  };
+  const isStandaloneShort = (line: string): boolean => {
+    const trimmed = line.trim();
+    if (!trimmed) return false;
+    if (toTokenCount(trimmed) > 6) return false;
+    return STANDALONE_SHORT_RX.test(trimmed);
+  };
+
+  const buildClusterLead = (cluster: string[]): string => {
+    if (!cluster.length) return '';
+    const parts: string[] = [];
+    cluster.forEach((rawLine, idx) => {
+      const trimmed = rawLine.trim();
+      const base = trimmed
+        .replace(/^…\s*/, '')
+        .replace(/[\s,.;!?…—-]+$/g, '')
+        .trim();
+      if (!base) return;
+      if (idx === 0) {
+        const lead = capitalizeFirst(base);
+        parts.push(`${lead}…`);
+      } else {
+        parts.push(`${base.toLowerCase()}—`);
+      }
+    });
+    if (!parts.length) {
+      const fallback = cluster[0].trim();
+      return fallback.endsWith('…') ? fallback : `${fallback}…`;
     }
-    if (!changed) break;
-    staccatoPasses += 1;
+    return parts.join(' ').replace(/—+$/, '—');
+  };
+
+  const chooseConnector = (shortLine: string, nextLine: string): string => {
+    const shortTrim = shortLine.trim();
+    const nextTrim = nextLine.trim();
+    const shortHasPause = /(…|—|-)$/.test(shortTrim);
+    const nextStartsLower = /^[a-z]/.test(nextTrim);
+    if (shortHasPause) return ' … ';
+    if (nextStartsLower) return ' … ';
+    return ' — ';
+  };
+
+  const mergeStandaloneShorts = () => {
+    let index = 0;
+    while (index < linesForStaccato.length) {
+      const line = linesForStaccato[index];
+      if (!isStandaloneShort(line) || isProtectedLine(line)) {
+        index += 1;
+        continue;
+      }
+
+      const cluster: string[] = [];
+      let cursor = index;
+      while (cursor < linesForStaccato.length && isStandaloneShort(linesForStaccato[cursor]) && !isProtectedLine(linesForStaccato[cursor])) {
+        cluster.push(linesForStaccato[cursor]);
+        cursor += 1;
+      }
+
+      const nextIndex = cursor;
+      if (nextIndex >= linesForStaccato.length) {
+        index = nextIndex;
+        continue;
+      }
+
+      const nextLine = linesForStaccato[nextIndex];
+      if (!nextLine.trim() || isProtectedLine(nextLine)) {
+        index = nextIndex;
+        continue;
+      }
+
+      const clusterLead = buildClusterLead(cluster);
+      const nextNormalized = normalizeWhitespace(nextLine);
+
+      let mergedLine: string;
+      if (cluster.length === 1) {
+        const connector = chooseConnector(cluster[0], nextLine);
+        let shortSegment = normalizeWhitespace(cluster[0]).replace(/\s+$/, '');
+        if (connector === ' … ') {
+          shortSegment = shortSegment.replace(/[.!?…]+$/g, '…');
+          if (!shortSegment.endsWith('…')) shortSegment += '…';
+        } else {
+          shortSegment = shortSegment.replace(/[.!?…]+$/g, '');
+        }
+        if (!shortSegment) {
+          shortSegment = clusterLead || normalizeWhitespace(cluster[0]);
+        }
+        mergedLine = cleanupMerge(`${shortSegment}${connector}${nextNormalized}`);
+      } else {
+        const normalizedLead = clusterLead.endsWith('—') ? clusterLead : `${clusterLead}—`;
+        mergedLine = cleanupMerge(`${normalizedLead} ${nextNormalized}`);
+      }
+
+      linesForStaccato.splice(index, cluster.length + 1, mergedLine);
+      standaloneMerged += cluster.length;
+      if (cluster.length > 1) fillerClustersTrimmed += cluster.length - 1;
+      mergesApplied += 1;
+    }
+  };
+
+  let lineWordCounts: number[] = [];
+  let shortLineFlags: boolean[] = [];
+  let totalShortLines = 0;
+
+  const recomputeMetrics = () => {
+    lineWordCounts = linesForStaccato.map((line) => countWords(line));
+    shortLineFlags = lineWordCounts.map((count) => count > 0 && count <= 6);
+    totalShortLines = shortLineFlags.filter(Boolean).length;
     staccatoShare = computeStaccatoShare(linesForStaccato);
-  }
-  if (staccatoShare > staccatoMax) {
-    for (let i = 0; i < linesForStaccato.length - 1 && staccatoShare > staccatoMax; i += 1) {
-      if (countWords(linesForStaccato[i]) <= 6) {
-        linesForStaccato[i] = `${linesForStaccato[i]} ${linesForStaccato[i + 1]}`.trim();
-        linesForStaccato.splice(i + 1, 1);
-        staccatoShare = computeStaccatoShare(linesForStaccato);
-        i -= 1;
+  };
+
+  recomputeMetrics();
+
+  const computeWindows = () => {
+    const windows: Array<{ start: number; end: number; share: number; candidates: number[] }> = [];
+    let start = 0;
+    while (start < linesForStaccato.length) {
+      let end = start;
+      let words = 0;
+      let shortCount = 0;
+      const shortIndices: number[] = [];
+      while (end < linesForStaccato.length && words + lineWordCounts[end] <= 200) {
+        words += lineWordCounts[end];
+        if (shortLineFlags[end]) {
+          shortCount += 1;
+          shortIndices.push(end);
+        }
+        end += 1;
+      }
+      if (words > 0 && end > start) {
+        windows.push({ start, end, share: shortCount / (end - start), candidates: shortIndices });
+      }
+      start = end > start ? end : start + 1;
+    }
+    return windows;
+  };
+
+  mergeStandaloneShorts();
+
+  const shortFillersInline = () => {
+    const SHORT_FILLER_RX = /^(Okay|Yeah|Mm|Sheesh|Wait|Anyway|Look)([ ,.…—-]*)$/i;
+    let i = 0;
+    while (i < linesForStaccato.length) {
+      const line = linesForStaccato[i];
+      if (!line.trim()) {
+        i += 1;
+        continue;
+      }
+      if (!SHORT_FILLER_RX.test(line.trim()) || countWords(line) > 6 || isProtectedLine(line)) {
+        i += 1;
+        continue;
+      }
+      let j = i;
+      while (j + 1 < linesForStaccato.length && SHORT_FILLER_RX.test(linesForStaccato[j + 1].trim()) && !isProtectedLine(linesForStaccato[j + 1])) {
+        linesForStaccato.splice(j, 1);
+        mergesApplied += 1;
+        fillerClustersTrimmed += 1;
+      }
+      if (i >= linesForStaccato.length - 1) {
+        i += 1;
+        continue;
+      }
+      const nextLine = linesForStaccato[i + 1];
+      if (!nextLine.trim() || isProtectedLine(nextLine)) {
+        i += 1;
+        continue;
+      }
+      const nextStartsSoft = /^(So|And|But|Okay|Look)/i.test(nextLine.trim());
+      const connector = nextStartsSoft ? ' … ' : ' — ';
+      const merged = cleanupMerge(`${line.trim().replace(/[ ,.…—-]+$/, '')}${connector}${normalizeWhitespace(nextLine)}`);
+      linesForStaccato[i] = merged;
+      linesForStaccato.splice(i + 1, 1);
+      mergesApplied += 1;
+      i += 1;
+    }
+  };
+
+  const enforceWindowCap = (): boolean => {
+    const windows = computeWindows();
+    for (const window of windows) {
+      const target = isAirSign ? 0.25 : isEarthSign ? 0.18 : (isFireSign || isWaterSign) ? 0.23 : 0.20;
+      if (window.share <= target) continue;
+      const candidates = window.candidates
+        .filter((idx) => lineWordCounts[idx] <= 6 && !isProtectedLine(linesForStaccato[idx]))
+        .sort((a, b) => lineWordCounts[a] - lineWordCounts[b]);
+      if (!candidates.length) continue;
+      for (const idx of candidates) {
+        if (lineWordCounts[idx] <= 4 && mergeIntoNext(idx)) {
+          recomputeMetrics();
+          windowsAdjusted += 1;
+          return true;
+        }
+      }
+      for (const idx of candidates) {
+        if (lineWordCounts[idx] <= 4 && mergeIntoPrevious(idx)) {
+          recomputeMetrics();
+          windowsAdjusted += 1;
+          return true;
+        }
+      }
+      for (const idx of candidates) {
+        if (mergeIntoNext(idx) || mergeIntoPrevious(idx)) {
+          recomputeMetrics();
+          windowsAdjusted += 1;
+          return true;
+        }
       }
     }
+    return false;
+  };
+
+  shortFillersInline();
+  recomputeMetrics();
+  while (!STACCATO_SAFE_MODE && enforceWindowCap()) {
+    recomputeMetrics();
   }
-  output = linesForStaccato.join('\n');
+
+  if (STACCATO_SAFE_MODE && staccatoShare > staccatoTargetMax) {
+    console.log('[post-flight] STACCATO_SAFE_MODE=1 active — window merges skipped.');
+  }
+
+  const maxShortLines = Math.floor(staccatoTargetMax * linesForStaccato.length);
+  if (!STACCATO_SAFE_MODE && totalShortLines > maxShortLines) {
+    for (let index = linesForStaccato.length - 1; index >= 0 && totalShortLines > maxShortLines; index -= 1) {
+      if (!shortLineFlags[index] || isProtectedLine(linesForStaccato[index])) continue;
+      const merged = mergeIntoPrevious(index) || mergeIntoNext(index);
+      if (!merged) continue;
+      recomputeMetrics();
+      index = Math.min(index, linesForStaccato.length - 1);
+    }
+  } else if (STACCATO_SAFE_MODE && totalShortLines > maxShortLines) {
+    console.log('[post-flight] STACCATO_SAFE_MODE=1 active — short-line ceiling merge skipped.');
+  }
+
   staccatoShare = computeStaccatoShare(linesForStaccato);
+  const staccatoAfter = staccatoShare;
+  output = linesForStaccato.join('\n');
+
+  const hygiene = stripDuplicateBanners(output);
+  output = hygiene.text;
+  let punctFixes = 0;
+  output = output.split('\n').map((line) => {
+    let updated = line.replace(/\?\?/g, '?');
+    if (updated !== line) punctFixes += 1;
+    const replacedQuestionPeriod = updated.replace(/\?\./g, '?');
+    if (replacedQuestionPeriod !== updated) punctFixes += 1;
+    updated = replacedQuestionPeriod;
+    const ellipsisReduced = updated.replace(/\.{3,}/g, '…');
+    if (ellipsisReduced !== updated) punctFixes += 1;
+    updated = ellipsisReduced;
+    const doublePeriodNormalized = updated.replace(/([^\.])\.\./g, '$1.');
+    if (doublePeriodNormalized !== updated) punctFixes += 1;
+    updated = doublePeriodNormalized;
+    const dashSpacingNormalized = updated.replace(/\s*—\s*/g, ' — ');
+    if (dashSpacingNormalized !== updated) punctFixes += 1;
+    updated = dashSpacingNormalized;
+    const ellipsisSpacingNormalized = updated.replace(/\s*…\s*/g, ' … ');
+    if (ellipsisSpacingNormalized !== updated) punctFixes += 1;
+    updated = ellipsisSpacingNormalized;
+    return updated.replace(/\s{2,}/g, ' ').trimEnd();
+  }).join('\n');
 
   // (#10) Anchor cadence for Scorpio & Pisces
+  let anchorBeatsApplied = 0;
   if (isWaterAnchorSign) {
     const anchorParagraphs = splitIntoParagraphs(output);
     const totalWords = anchorParagraphs.reduce((sum, paragraph) => sum + countWords(paragraph), 0);
@@ -762,27 +1244,55 @@ export function enforcePostFlight(text: string, sign?: string): PostFlightMetric
     const longRotation = { value: 0 };
     const connectiveRotation = { value: 0 };
     let cumulative = 0;
+    const windowsHandled = new Set<number>();
     for (let i = 0; i < paragraphsAir.length; i += 1) {
       const windowIndex = Math.floor(cumulative / windowSize);
-      const alreadyHasBeat = /You feel that shift\.|Hear the new current\.|This pause is loud\.|See the open door\.|Feel the air change\./.test(paragraphsAir[i]);
-      if (!alreadyHasBeat && wordsPerParagraph[i] > 0) {
-        const shortBeat = pickRotating(AIR_SHORT_BEATS, shortRotation);
-        const longBeatBase = pickRotating(AIR_LONG_BEATS, longRotation);
-        const connective = pickRotating(AIR_CONNECTIVES, connectiveRotation);
-        const longBeat = `${connective.charAt(0).toUpperCase() + connective.slice(1)}, ${longBeatBase.charAt(0).toLowerCase() + longBeatBase.slice(1)}`;
-        const extraQuestion = pickRotating(QUESTION_TEMPLATES, questionRotation);
-        paragraphsAir[i] = `${shortBeat}\n${longBeat}\n${extraQuestion}\n${paragraphsAir[i]}`;
-        airModWindows += 1;
-        questionCount += 1;
-      }
       cumulative += wordsPerParagraph[i];
+      if (windowsHandled.has(windowIndex)) continue;
+      const paragraph = paragraphsAir[i];
+      if (!paragraph || paragraph.includes('<')) continue;
+      const alreadyHasBeat = /You feel that shift\.|Hear the new current\.|This pause is loud\.|See the open door\.|Feel the air change\./.test(paragraph);
+      if (alreadyHasBeat || wordsPerParagraph[i] === 0) continue;
+      const shortBeat = pickRotating(AIR_SHORT_BEATS, shortRotation);
+      const longBeatBase = pickRotating(AIR_LONG_BEATS, longRotation);
+      const connective = pickRotating(AIR_CONNECTIVES, connectiveRotation);
+      const longBeat = `${capitalizeFirst(connective)}, ${longBeatBase.charAt(0).toLowerCase() + longBeatBase.slice(1)}`;
+      const wordOffset = cumulative - wordsPerParagraph[i];
+      let questionLine = '';
+      if (questionSlotsRemaining > 0) {
+        const extraQuestion = pickRitualQuestion(wordOffset);
+        questionLine = extraQuestion;
+        questionCount += 1;
+        questionsInjected += 1;
+        injectedQuestionRecords.push({ question: extraQuestion, priority: 2 });
+        questionSlotsRemaining = Math.max(questionTarget - questionCount, 0);
+      }
+      const shortTrim = shortBeat.trim();
+      const shortBase = shortTrim.replace(/[.!?…]+$/g, '');
+      let inlineShort = capitalizeFirst(shortBase);
+      if (!inlineShort.endsWith('…')) inlineShort = `${inlineShort}…`;
+      const longStartsLower = /^[a-z]/.test(longBeat.trim());
+      const shortHasEllipsis = /…$/.test(shortTrim);
+      const inlineConnector = shortHasEllipsis ? ' … ' : longStartsLower ? ' … ' : ' — ';
+      let inlineIntro = cleanupMerge(`${inlineShort}${inlineConnector}${longBeat}`);
+      if (questionLine) {
+        inlineIntro = cleanupMerge(`${inlineIntro} ${questionLine}`);
+      }
+      const paragraphBody = normalizeWhitespace(paragraph);
+      const combinedParagraph = paragraphBody
+        ? cleanupMerge(`${inlineIntro} ${paragraphBody}`)
+        : inlineIntro;
+      paragraphsAir[i] = combinedParagraph;
+      airShortBeatsInlined += 1;
+      airModWindows += 1;
+      windowsHandled.add(windowIndex);
     }
     output = joinParagraphs(paragraphsAir);
   }
 
   // (#13) Reveal cadence pair
   const revealTarget = Math.max(1, Math.round(Math.max(countWords(output) / 1000, 0.75)));
-  let revealCount = countMatches(output, /Here’s the part you don’t want to say…/g);
+  let revealCount = countMatches(output, /Here's the part you don't want to say…/g);
   if (revealCount < revealTarget) {
     const revealParagraphs = splitIntoParagraphs(output);
     const insertIndex = Math.min(revealParagraphs.length, Math.max(1, Math.floor(revealParagraphs.length * 0.6)));
@@ -809,23 +1319,75 @@ export function enforcePostFlight(text: string, sign?: string): PostFlightMetric
     }
     output = joinParagraphs(arcParagraphs);
   }
+  if (questionCount > questionTarget && injectedQuestionRecords.length) {
+    const paragraphsTrim = splitIntoParagraphs(output);
+    const sortedRecords = [...injectedQuestionRecords].sort((a, b) => a.priority - b.priority);
+    for (const record of sortedRecords) {
+      if (questionCount <= questionTarget) break;
+      const escaped = escapeRegExp(record.question.trim());
+      const standaloneRegex = new RegExp(`^\s*${escaped}\s*$`);
+      const trailingRegex = new RegExp(`\s*${escaped}[.!?…]*$`);
+      for (let i = 0; i < paragraphsTrim.length && questionCount > questionTarget; i += 1) {
+        if (!paragraphsTrim[i].includes(record.question)) continue;
+        let updated = paragraphsTrim[i];
+        if (standaloneRegex.test(updated)) {
+          updated = '';
+        } else if (trailingRegex.test(updated)) {
+          updated = updated.replace(trailingRegex, '').trimEnd();
+        } else {
+          continue;
+        }
+        if (updated !== paragraphsTrim[i]) {
+          paragraphsTrim[i] = updated;
+          questionCount -= 1;
+          questionsTrimmed += 1;
+          break;
+        }
+      }
+    }
+    output = joinParagraphs(paragraphsTrim);
+    questionCount = countMatches(output, /\?/g);
+  }
 
   // (#15) Long-line guard (>28 words sans punctuation)
   let longLineFixes = 0;
   let linesForGuard = output.split('\n');
   for (let i = 0; i < linesForGuard.length; i += 1) {
     const line = linesForGuard[i];
+    if (line.includes('<') || line.includes('http') || line.includes('://') || /\d{1,2}:\d{2}/.test(line)) {
+      continue;
+    }
     if (countWords(line) > 28 && !/[.,;:!?—…]/.test(line)) {
-      const words = line.trim().split(/\s+/);
-      const splitIndex = Math.floor(words.length / 2);
-      const first = ensureTrailingPunctuation(words.slice(0, splitIndex).join(' '), '…');
-      const second = ensureTrailingPunctuation(words.slice(splitIndex).join(' '));
-      linesForGuard.splice(i, 1, first, second);
+      const delimiters = [', and ', ', but ', ' — ', ' … '];
+      let first = '';
+      let second = '';
+      let splitFound = false;
+      for (const delimiter of delimiters) {
+        const idx = line.indexOf(delimiter);
+        if (idx > 0) {
+          first = line.slice(0, idx).trim();
+          second = line.slice(idx + delimiter.length).trim();
+          if (first && second) {
+            splitFound = true;
+            break;
+          }
+        }
+      }
+      if (!splitFound) {
+        const words = line.trim().split(/\s+/);
+        const mid = Math.floor(words.length / 2);
+        first = `${words.slice(0, mid).join(' ')} —`.trim();
+        second = capitalizeFirst(words.slice(mid).join(' ').trim());
+        linesForGuard.splice(i, 1, ensureTrailingPunctuation(first, '.'), ensureTrailingPunctuation(capitalizeFirst(second)));
+      } else {
+        linesForGuard.splice(i, 1, ensureTrailingPunctuation(first), ensureTrailingPunctuation(capitalizeFirst(second)));
+      }
       longLineFixes += 1;
       i += 1;
     }
   }
   output = linesForGuard.join('\n');
+  output = collapseEllipses(output);
 
   // (#11) Capricorn energy zeroing
   if (isCapricorn) {
@@ -854,6 +1416,15 @@ export function enforcePostFlight(text: string, sign?: string): PostFlightMetric
   }
   finalEnergy = energyCount;
 
+  if (isCapricorn) {
+    const fragmentPassCap = enforceThereFragmentsPass(output);
+    if (fragmentPassCap.fragmentsFixed || fragmentPassCap.clausesNormalized) {
+      output = fragmentPassCap.text;
+      fragmentsFixed += fragmentPassCap.fragmentsFixed;
+      clausesNormalized += fragmentPassCap.clausesNormalized;
+    }
+  }
+
   let additionalSoftened = 0;
   finalSignatureMatches = collectSignatureMatches(output);
   while (finalSignatureMatches.length > 3) {
@@ -868,9 +1439,9 @@ export function enforcePostFlight(text: string, sign?: string): PostFlightMetric
   signatureSoftened += additionalSoftened;
   finalSignature = finalSignatureMatches.length;
 
-  ellipsesCount = countMatches(output, /\.\.\./g);
+  ellipsesCount = countMatches(output, /…/g);
   questionCount = countMatches(output, /\?/g);
-  letsCount = countMatches(output, /\bLet’s\b/gi);
+  letsCount = countMatches(output, /\bLet[''']s\b/gi);
   const finalLines = output.split('\n');
   staccatoShare = computeStaccatoShare(finalLines);
 
@@ -882,7 +1453,7 @@ export function enforcePostFlight(text: string, sign?: string): PostFlightMetric
   }
 
   console.log(
-    `[post-flight] energy ${initialEnergy}→${finalEnergy} (replacements=${energyReplacements}), signature ${initialSignatureMatches.length}→${finalSignature} (softened=${signatureSoftened}), fragmentsFixed=${fragmentsFixed}, clausesNormalized=${clausesNormalized}, nounCollapses=${nounCollapses}, commaFixes=${commaFixes}, nounSeamsCollapsed=${nounSeamsCollapsed}, genericEnergyFixes=${genericEnergyFixes.length}, ellipses=${ellipsesCount}, questions=${questionCount}, staccatoShare=${staccatoShare.toFixed(2)}, lets=${letsCount}, longLineFixes=${longLineFixes}, airModWindows=${airModWindows}, anchorBeats=${anchorBeatsApplied}`
+    `[post-flight] energy ${initialEnergy}→${finalEnergy} (replacements=${energyReplacements}), signature ${initialSignatureMatches.length}→${finalSignature} (softened=${signatureSoftened}), fragmentsFixed=${fragmentsFixed}, clausesNormalized=${clausesNormalized}, nounCollapses=${nounCollapses}, commaFixes=${commaFixes}, nounSeamsCollapsed=${nounSeamsCollapsed}, genericEnergyFixes=${genericEnergyFixes.length}, ellipses=${ellipsesCount}, questions=${questionCount}/${questionsAllowed} (injected=${questionsInjected}, trimmed=${questionsTrimmed}, afterRate=${(questionsAllowed ? questionCount / questionsAllowed : 0).toFixed(2)}), staccatoShare=${staccatoShare.toFixed(2)} (before=${staccatoBefore.toFixed(2)}), merges=${mergesApplied}, standaloneMerged=${standaloneMerged}, windowsAdjusted=${windowsAdjusted}, lets=${letsCount}, longLineFixes=${longLineFixes}, airModWindows=${airModWindows}, airShortBeatsInlined=${airShortBeatsInlined}, anchorBeats=${anchorBeatsApplied}, fillerClustersTrimmed=${fillerClustersTrimmed}, ctaExclaimFixes=${ctaExclaimFixes}, pivotReactionRotations=${pivotReactionRotations}${STACCATO_SAFE_MODE ? ', safeMode=1' : ''}${QUESTIONS_THROTTLE_FACTOR !== 1 ? `, throttle=${QUESTIONS_THROTTLE_FACTOR.toFixed(2)}` : ''}, bannersRemoved=${hygiene.removed}, punctFixes=${punctFixes}`
   );
 
   return {
@@ -904,6 +1475,8 @@ export function enforcePostFlight(text: string, sign?: string): PostFlightMetric
     longLineFixes,
     airModWindows,
     anchorBeatsApplied,
+    bannersRemoved: hygiene.removed,
+    punctFixes,
   };
 }
 
@@ -946,7 +1519,7 @@ async function genChapter(prompt: string, model = 'gpt-4.1-mini'): Promise<strin
   return r.choices[0]?.message?.content || '';
 }
 
-export async function generateFullReading(sign: string) {
+export async function generateFullReading(sign: string, options: { seed?: string; mode?: string; with_breaks?: boolean } = {}) {
   console.log(`[generate] Starting full reading generation for ${sign}`);
   
   const validatorHash = computeValidatorHash();
@@ -955,6 +1528,13 @@ export async function generateFullReading(sign: string) {
     const message = 'Validator drift detected — expected v5.3.0-stable hash. Aborting generation.';
     console.error(`[generate] ${message}`);
     throw new Error(message);
+  }
+
+  if (options.seed) {
+    process.env.GENERATION_SEED = options.seed;
+  }
+  if (options.mode) {
+    process.env.GENERATION_MODE = options.mode;
   }
 
   try {
@@ -1089,9 +1669,14 @@ export async function generateFullReading(sign: string) {
     console.log('[generate] Stitching chapters...');
     const stitchedRaw = [ch1, ch2, ch3, ch4, ch5, ch6].join('\n\n');
 
-    // 3) Sanitize (remove debug logs)
+    // 3) Sanitize (remove debug logs and any LLM-hallucinated banners)
     console.log('[generate] Sanitizing content...');
-    const stitchedSanitized = sanitizeForOutput(stitchedRaw, { breaks: 'none' });
+    let stitchedSanitized = sanitizeForOutput(stitchedRaw, { breaks: 'none' });
+    // Strip any banners that the LLM may have hallucinated (anywhere in text, not just start-of-line)
+    const bannersBeforeStrip = (stitchedSanitized.match(/\[validator_hash=[^\]]*\]/g) || []).length;
+    stitchedSanitized = stitchedSanitized.replace(/\[validator_hash=[^\]]*\]\n?/g, '');
+    const bannersAfterStrip = (stitchedSanitized.match(/\[validator_hash=[^\]]*\]/g) || []).length;
+    console.log(`[generate] Stripped ${bannersBeforeStrip - bannersAfterStrip} LLM-hallucinated banners`);
     const postFlight = enforcePostFlight(stitchedSanitized, sign);
     const postFlightText = postFlight.text;
 
@@ -1131,10 +1716,28 @@ export async function generateFullReading(sign: string) {
     await deleteOldFiles(`FULL_READING_with_breaks__${sign}__`, 5);
 
     console.log(`[generate] Generation complete: ${plainName}, ${breaksName}`);
-    return { plainName, breaksName };
+    return { plainName, breaksName, metrics: postFlight };
     
   } catch (error) {
     console.error('[generate] Error during generation:', error);
     throw error;
   }
+}
+
+function stripDuplicateBanners(text: string): { text: string; removed: number } {
+  const lines = text.split('\n');
+  let bannerSeen = false;
+  let removed = 0;
+  const filtered = lines.filter((line) => {
+    if (/^\[validator_hash=/.test(line.trim())) {
+      if (bannerSeen) {
+        removed += 1;
+        return false;
+      }
+      bannerSeen = true;
+      return true;
+    }
+    return true;
+  });
+  return { text: filtered.join('\n'), removed };
 }

@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "vercel-build": "next build"
+    "vercel-build": "next build",
+    "lint": "eslint . --ignore-pattern archive/**",
+    "diag:v54": "ts-node scripts/diag_v54_staccato.ts",
+    "control:v541": "ts-node --compiler-options '{\"module\":\"commonjs\"}' scripts/run_v541_controls.ts",
+    "snap": "bash scripts/snap.sh"
   },
   "dependencies": {
     "@vercel/blob": "^2.0.0",
